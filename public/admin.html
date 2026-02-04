@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+<title>ADMIN</title>
+
+<style>
+
+.login{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+flex-direction:column;
+}
+
+.tabs{
+display:flex;
+gap:20px;
+padding:20px;
+}
+
+.tabBtn{
+flex:1;
+padding:15px;
+font-size:18px;
+}
+
+.panel{
+padding:20px;
+}
+
+input,textarea{
+display:block;
+width:100%;
+margin:10px 0;
+padding:10px;
+border-radius:10px;
+border:none;
+background:#020617;
+color:white;
+border:1px solid #00ffcc44;
+}
+
+.productCard{
+background:#020617;
+padding:10px;
+margin:10px 0;
+border-radius:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div class="login" id="login">
+
+<h2>🔐 Admin Login</h2>
+
+<input id="code" placeholder="الكود">
+
+<button onclick="login()">دخول</button>
+
+</div>
+
+
+
+<!-- PANEL -->
+
+<div id="panel" style="display:none">
+
+<div class="tabs">
+
+<button class="tabBtn" onclick="openTab('add')">
+➕ إضافة منتج
+</button>
+
+<button class="tabBtn" onclick="openTab('products')">
+📦 المنتجات
+</button>
+
+<button class="tabBtn" onclick="openTab('orders')">
+🧾 الطلبات
+</button>
+
+<button class="tabBtn" onclick="openTab('discount')">
+💸 الخصومات
+</button>
+
+</div>
+
+
+<div class="panel" id="add">
+
+<h2>إضافة منتج</h2>
+
+<input id="name" placeholder="اسم المنتج">
+<input id="price" placeholder="السعر">
+<input id="discount" placeholder="قيمة الخصم">
+<input id="stock" placeholder="عدد القطع">
+<textarea id="description" placeholder="الوصف"></textarea>
+
+<input type="file" id="images" multiple>
+
+<button onclick="addProduct()">
+اضافة
+</button>
+
+</div>
+
+
+<div class="panel" id="products" style="display:none"></div>
+
+<div class="panel" id="orders" style="display:none"></div>
+
+<div class="panel" id="discount" style="display:none">
+<h2>الخصومات يتم اضافتها وقت إنشاء المنتج 👍</h2>
+</div>
+
+</div>
+
+
+<script>
+
+// 🔐 LOGIN
+
+function login(){
+
+fetch("/admin-login",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+code:code.value
+})
+})
+.then(r=>r.json())
+.then(d=>{
+
+if(d.success){
+
+login.style.display="none";
+panel.style.display="block";
+
+loadProducts();
+loadOrders();
+
+}else{
+alert("الكود غلط");
+}
+
+});
+
+}
+
+
+
+// TABS
+
+function openTab(id){
+
+document.querySelectorAll(".panel")
+.forEach(p=>p.style.display="none");
+
+document.getElementById(id)
+.style.display="block";
+
+}
+
+
+
+// 🔥 تحويل الصور Base64
+
+function toBase64(file){
+
+return new Promise(resolve=>{
+
+const reader = new FileReader();
+
+reader.readAsDataURL(file);
+
+reader.onload = ()=> resolve(reader.result);
+
+});
+
+}
+
+
+
+// ➕ ADD PRODUCT
+
+async function addProduct(){
+
+let imgs=[];
+
+for(let file of images.files){
+imgs.push(await toBase64(file));
+}
+
+fetch("/api/products",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+
+name:name.value,
+price:Number(price.value),
+discount:Number(discount.value),
+stock:Number(stock.value),
+description:description.value,
+images:imgs
+
+})
+})
+.then(()=>{
+
+alert("تم اضافة المنتج 🔥");
+
+loadProducts();
+
+});
+
+}
+
+
+
+// 📦 LOAD PRODUCTS
+
+function loadProducts(){
+
+fetch("/api/products")
+.then(r=>r.json())
+.then(data=>{
+
+products.innerHTML="<h2>المنتجات</h2>";
+
+data.forEach(p=>{
+
+products.innerHTML+=`
+
+<div class="productCard">
+
+<img src="${p.images[0]}" width="60">
+
+<b>${p.name}</b>
+
+<br>
+السعر: ${p.price}
+
+<br>
+الخصم: ${p.discount}
+
+<br>
+المخزون: ${p.stock}
+
+<button onclick="deleteProduct(${p.id})">
+حذف
+</button>
+
+</div>
+
+`;
+
+});
+
+});
+
+}
+
+
+
+// ❌ DELETE
+
+function deleteProduct(id){
+
+fetch("/api/products/"+id,{
+method:"DELETE"
+})
+.then(()=>loadProducts());
+
+}
+
+
+
+// 🧾 LOAD ORDERS
+
+function loadOrders(){
+
+fetch("/api/orders")
+.then(r=>r.json())
+.then(data=>{
+
+orders.innerHTML="<h2>الطلبات</h2>";
+
+data.forEach(o=>{
+
+orders.innerHTML+=`
+
+<div class="productCard">
+
+<b>👤 ${o.customer.name}</b>
+
+<br>
+📞 ${o.customer.phone}
+
+<br>
+📍 ${o.customer.address}
+
+<hr>
+
+${o.cart.map(p=>`
+<p>${p.name} x ${p.qty}</p>
+`).join("")}
+
+</div>
+
+`;
+
+});
+
+});
+
+}
+
+</script>
+
+</body>
+  </html>
