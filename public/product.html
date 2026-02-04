@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+<title>Product</title>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">🔥 Gaming Store</div>
+</nav>
+
+<div style="padding:40px" id="product"></div>
+
+
+<script>
+
+// نجيب id من اللينك
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+
+fetch("/api/products")
+.then(r=>r.json())
+.then(products=>{
+
+const p = products.find(x=>x.id == id);
+
+product.innerHTML=`
+
+<div style="display:grid;
+grid-template-columns:1fr 1fr;
+gap:40px;
+align-items:center;">
+
+<img src="${p.images[0]}" 
+style="width:100%;border-radius:20px;">
+
+<div>
+
+<h1>${p.name}</h1>
+
+<p>${p.description || ""}</p>
+
+${p.discount ? 
+`<small style="text-decoration:line-through">
+${p.price}
+</small>` : ""}
+
+<h2 style="color:#00ffcc">
+${p.discount ? p.price-p.discount : p.price} جنيه
+</h2>
+
+<p>المتبقي: ${p.stock}</p>
+
+<div style="display:flex;gap:10px;align-items:center">
+
+<button onclick="changeQty(-1)">-</button>
+
+<h3 id="qty">1</h3>
+
+<button onclick="changeQty(1)">+</button>
+
+</div>
+
+<button onclick="buyNow()">
+شراء الآن
+</button>
+
+</div>
+
+</div>
+
+`;
+
+window.productData = p;
+
+});
+
+let quantity=1;
+
+function changeQty(num){
+
+quantity += num;
+
+if(quantity<1) quantity=1;
+
+qty.innerText=quantity;
+
+}
+
+
+
+function buyNow(){
+
+const name = prompt("اسمك");
+const phone = prompt("رقمك");
+const address = prompt("عنوانك");
+
+if(!name || !phone || !address){
+alert("اكمل البيانات!");
+return;
+}
+
+fetch("/api/orders",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+customer:{
+name,
+phone,
+address
+},
+cart:[{
+...productData,
+qty:quantity
+}]
+})
+});
+
+alert("تم ارسال الطلب 🔥");
+
+}
+
+</script>
+
+</body>
+</html>
