@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ADMIN</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0b0f17;
+color:white;
+padding:30px;
+}
+
+.login{
+text-align:center;
+margin-top:120px;
+}
+
+input,select,textarea{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:12px;
+border:none;
+border-radius:8px;
+background:#00ffc3;
+cursor:pointer;
+font-weight:bold;
+}
+
+.panel{
+display:none;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:25px;
+}
+
+.card{
+background:#111927;
+padding:20px;
+border-radius:12px;
+}
+
+.product{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin:10px 0;
+background:#1a2435;
+padding:10px;
+border-radius:8px;
+}
+
+img{
+width:55px;
+border-radius:8px;
+}
+
+.active{
+color:#00ff9d;
+}
+
+.off{
+color:red;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="login" class="login">
+
+<h1>🔐 Admin Login</h1>
+
+<input id="code" placeholder="Password">
+
+<button onclick="login()">دخول</button>
+
+</div>
+
+<!-- PANEL -->
+
+<div id="panel" class="panel">
+
+<h1>🔥 TECH STORE Dashboard</h1>
+
+<div class="grid">
+
+<!-- ADD PRODUCT -->
+
+<div class="card">
+
+<h2>إضافة منتج</h2>
+
+<input id="name" placeholder="اسم المنتج">
+<input id="price" placeholder="السعر">
+<input id="discount" placeholder="خصم %">
+<input id="stock" placeholder="المخزون">
+<textarea id="desc" placeholder="الوصف"></textarea>
+<input type="file" id="images" multiple>
+
+<button onclick="addProduct()">إضافة</button>
+
+</div>
+
+<!-- PRODUCTS -->
+
+<div class="card">
+
+<h2>المنتجات</h2>
+
+<div id="products"></div>
+
+</div>
+
+<!-- ORDERS -->
+
+<div class="card">
+
+<h2>الطلبات</h2>
+
+<div id="orders"></div>
+
+</div>
+
+<!-- COUPONS -->
+
+<div class="card">
+
+<h2>كوبونات الخصم</h2>
+
+<input id="couponCode" placeholder="CODE">
+
+<select id="couponType">
+<option value="percent">نسبة %</option>
+<option value="fixed">رقم ثابت</option>
+</select>
+
+<input id="couponValue" placeholder="قيمة الخصم">
+
+<button onclick="createCoupon()">
+إنشاء كوبون
+</button>
+
+<hr>
+
+<div id="couponList"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* LOGIN */
+
+function login(){
+
+fetch("/admin-login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+code:document.getElementById("code").value
+})
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.success){
+
+login.style.display="none";
+panel.style.display="block";
+
+loadProducts();
+loadOrders();
+loadCoupons();
+
+}else{
+
+alert("كود غلط");
+
+}
+
+});
+
+}
+
+/* ADD PRODUCT */
+
+async function addProduct(){
+
+const files=document.getElementById("images").files;
+
+let imgs=[];
+
+for(let file of files){
+
+const base64 = await toBase64(file);
+imgs.push(base64);
+
+}
+
+await fetch("/api/products",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+
+body:JSON.stringify({
+
+name:name.value,
+price:+price.value,
+discount:+discount.value,
+stock:+stock.value,
+description:desc.value,
+images:imgs
+
+})
+
+});
+
+alert("تمت الإضافة 🔥");
+
+loadProducts();
+
+}
+
+function toBase64(file){
+
+return new Promise(resolve=>{
+
+const reader=new FileReader();
+reader.readAsDataURL(file);
+reader.onload=()=>resolve(reader.result);
+
+});
+
+}
+
+/* PRODUCTS */
+
+function loadProducts(){
+
+fetch("/api/products")
+.then(res=>res.json())
+.then(data=>{
+
+products.innerHTML="";
+
+data.forEach(p=>{
+
+products.innerHTML+=`
+
+<div class="product">
+
+<img src="${p.images[0]}">
+
+${p.name}
+
+<button onclick="deleteProduct('${p.id}')">
+حذف
+</button>
+
+</div>
+
+`;
+
+});
+
+});
+
+}
+
+function deleteProduct(id){
+
+fetch("/api/products/"+id,{
+method:"DELETE"
+})
+.then(loadProducts);
+
+}
+
+/* ORDERS */
+
+function loadOrders(){
+
+fetch("/api/orders")
+.then(res=>res.json())
+.then(data=>{
+
+orders.innerHTML="";
+
+data.forEach(o=>{
+
+orders.innerHTML+=`
+
+<div class="product">
+
+<div>
+👤 ${o.customer.name}<br>
+📞 ${o.customer.phone}<br>
+💰 ${o.total} جنيه
+</div>
+
+<img src="${o.cart[0].images[0]}">
+
+</div>
+
+`;
+
+});
+
+});
+
+}
+
+/* COUPONS */
+
+function loadCoupons(){
+
+fetch("/api/coupons")
+.then(res=>res.json())
+.then(data=>{
+
+couponList.innerHTML="";
+
+data.forEach(c=>{
+
+couponList.innerHTML+=`
+
+<div class="product">
+
+${c.code} - ${c.discount}
+
+<span class="${c.active ? "active":"off"}">
+${c.active ? "مفعل":"متوقف"}
+</span>
+
+<button onclick="toggleCoupon('${c.code}')">
+تغيير الحالة
+</button>
+
+</div>
+
+`;
+
+});
+
+});
+
+}
+
+function createCoupon(){
+
+fetch("/api/coupons",{
+
+method:"POST",
+headers:{"Content-Type":"application/json"},
+
+body:JSON.stringify({
+
+code:couponCode.value,
+type:couponType.value,
+discount:+couponValue.value
+
+})
+
+})
+.then(()=>{
+
+alert("تم إنشاء الكوبون 🔥");
+loadCoupons();
+
+});
+
+}
+
+function toggleCoupon(code){
+
+fetch("/api/coupons/"+code,{
+method:"PATCH"
+})
+.then(loadCoupons);
+
+}
+
+</script>
+
+</body>
+</html>
