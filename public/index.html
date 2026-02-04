@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TECH STORE</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#eaeded;
+}
+
+/* NAVBAR */
+
+.navbar{
+background:#131921;
+color:white;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:15px 25px;
+}
+
+.logo{
+font-size:26px;
+font-weight:bold;
+color:#00ffd5;
+}
+
+.search{
+width:40%;
+padding:10px;
+border:none;
+border-radius:6px;
+}
+
+/* BANNER */
+
+.banner{
+height:320px;
+background:url("https://images.unsplash.com/photo-1518770660439-4636190af475") center/cover;
+display:flex;
+align-items:end;
+}
+
+.banner h1{
+background:rgba(0,0,0,.6);
+color:white;
+padding:20px;
+margin:40px;
+border-radius:10px;
+}
+
+/* PRODUCTS */
+
+.products{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+padding:40px;
+margin-top:-120px;
+}
+
+.card{
+background:white;
+border-radius:10px;
+padding:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+transition:.2s;
+}
+
+.card:hover{
+transform:scale(1.03);
+}
+
+.card img{
+width:100%;
+height:220px;
+object-fit:contain;
+}
+
+.title{
+font-weight:bold;
+margin:10px 0;
+}
+
+.price{
+color:#B12704;
+font-size:20px;
+}
+
+.old{
+text-decoration:line-through;
+color:gray;
+font-size:14px;
+margin-left:5px;
+}
+
+button{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:none;
+background:#FFD814;
+cursor:pointer;
+border-radius:8px;
+font-weight:bold;
+}
+
+button:hover{
+background:#F7CA00;
+}
+
+/* CART */
+
+.cart-btn{
+position:fixed;
+bottom:20px;
+left:20px;
+background:#131921;
+color:white;
+padding:15px;
+border-radius:50%;
+font-size:20px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+<div class="logo">
+📦 TECH STORE
+</div>
+
+<input class="search" placeholder="ابحث عن منتج..." onkeyup="searchProduct(this.value)">
+
+</div>
+
+<!-- BANNER -->
+
+<div class="banner">
+<h1>🔥 أقوى العروض على اللابتوب والموبايلات</h1>
+</div>
+
+<!-- PRODUCTS -->
+
+<div class="products" id="products"></div>
+
+<!-- CART -->
+
+<div class="cart-btn" onclick="goCart()">🛒</div>
+
+<script>
+
+let allProducts=[];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+async function loadProducts(){
+
+const res = await fetch("/api/products");
+const data = await res.json();
+
+allProducts=data;
+showProducts(data);
+
+}
+
+function showProducts(products){
+
+const container=document.getElementById("products");
+
+container.innerHTML="";
+
+products.forEach(p=>{
+
+const priceAfter =
+p.discount>0
+? p.price - (p.price * p.discount /100)
+: p.price;
+
+container.innerHTML+=`
+
+<div class="card">
+
+<img src="${p.image}">
+
+<div class="title">${p.name}</div>
+
+<div class="price">
+
+${priceAfter} جنيه
+
+${p.discount>0 ? `<span class="old">${p.price}</span>`:""}
+
+</div>
+
+<button onclick="addToCart(${p.id})">
+اضف للسلة
+</button>
+
+<button onclick="location.href='/product.html?id=${p.id}'">
+عرض المنتج
+</button>
+
+</div>
+`;
+});
+
+}
+
+function addToCart(id){
+
+const product = allProducts.find(p=>p.id===id);
+
+const exist = cart.find(c=>c.id===id);
+
+if(exist){
+exist.qty++;
+}else{
+cart.push({...product,qty:1});
+}
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+alert("تمت الإضافة للسلة 🛒");
+
+}
+
+function searchProduct(text){
+
+const filtered = allProducts.filter(p=>
+p.name.toLowerCase().includes(text.toLowerCase())
+);
+
+showProducts(filtered);
+
+}
+
+function goCart(){
+location.href="/cart.html";
+}
+
+loadProducts();
+
+</script>
+
+</body>
+  </html>
