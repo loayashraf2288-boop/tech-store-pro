@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Add Product</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+display:flex;
+background:#020617;
+color:white;
+}
+
+/* sidebar */
+
+.sidebar{
+width:230px;
+background:#0f172a;
+height:100vh;
+padding:20px;
+}
+
+.sidebar h2{
+color:#00ffd5;
+}
+
+.sidebar a{
+display:block;
+margin-top:15px;
+color:white;
+text-decoration:none;
+}
+
+/* main */
+
+.main{
+flex:1;
+padding:40px;
+}
+
+.card{
+background:#0f172a;
+padding:25px;
+border-radius:12px;
+max-width:600px;
+}
+
+input,textarea{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+}
+
+button{
+margin-top:15px;
+padding:12px;
+width:100%;
+border:none;
+background:#00c896;
+color:white;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+}
+
+.preview{
+margin-top:15px;
+width:150px;
+border-radius:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>TECH STORE</h2>
+
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="products.html">📦 Products</a>
+<a href="add-product.html">➕ Add Product</a>
+<a href="orders.html">🧾 Orders</a>
+<a href="coupons.html">🏷️ Coupons</a>
+
+</div>
+
+
+<div class="main">
+
+<div class="card">
+
+<h2>➕ إضافة منتج جديد</h2>
+
+<input id="name" placeholder="اسم المنتج">
+
+<input id="price" type="number" placeholder="السعر">
+
+<input id="discount" type="number" placeholder="خصم % (اختياري)">
+
+<input id="stock" type="number" placeholder="الكمية المتاحة">
+
+<textarea id="desc" placeholder="وصف المنتج"></textarea>
+
+<input type="file" id="image" accept="image/*">
+
+<img id="preview" class="preview" style="display:none;">
+
+<button onclick="addProduct()">إضافة المنتج</button>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+/* حماية */
+if(!localStorage.getItem("admin")){
+location.href="/admin/login.html";
+}
+
+
+/* preview للصورة */
+
+image.onchange = () => {
+
+const file = image.files[0];
+
+if(file){
+preview.src = URL.createObjectURL(file);
+preview.style.display="block";
+}
+
+}
+
+
+/* إضافة المنتج */
+
+async function addProduct(){
+
+if(!name.value || !price.value || !stock.value || !image.files[0]){
+
+alert("املى كل البيانات الأول ⚠️");
+return;
+
+}
+
+const formData = new FormData();
+
+formData.append("name",name.value);
+formData.append("price",price.value);
+formData.append("discount",discount.value);
+formData.append("stock",stock.value);
+formData.append("description",desc.value);
+formData.append("image",image.files[0]);
+
+await fetch("/api/products",{
+method:"POST",
+body:formData
+});
+
+alert("🔥 تم إضافة المنتج بنجاح");
+
+location.href="products.html";
+
+}
+
+</script>
+
+</body>
+</html>
