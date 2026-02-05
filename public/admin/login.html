@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Admin Login</title>
+
+<style>
+
+body{
+background:#020617;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+font-family:Arial;
+color:white;
+}
+
+.box{
+background:#0f172a;
+padding:40px;
+border-radius:12px;
+width:300px;
+text-align:center;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+border:none;
+background:#00c896;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>🔐 Admin</h2>
+
+<input id="password" placeholder="Password">
+
+<button onclick="login()">دخول</button>
+
+</div>
+
+<script>
+
+async function login(){
+
+const res=await fetch("/admin-login",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+password:password.value
+})
+
+});
+
+const data=await res.json();
+
+if(data.success){
+
+localStorage.setItem("admin","true");
+
+location.href="/admin/dashboard.html";
+
+}else{
+
+alert("كلمة المرور غلط");
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
