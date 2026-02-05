@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Products</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+display:flex;
+background:#020617;
+color:white;
+}
+
+/* sidebar */
+
+.sidebar{
+width:230px;
+background:#0f172a;
+height:100vh;
+padding:20px;
+}
+
+.sidebar h2{
+color:#00ffd5;
+}
+
+.sidebar a{
+display:block;
+margin-top:15px;
+color:white;
+text-decoration:none;
+}
+
+/* main */
+
+.main{
+flex:1;
+padding:30px;
+}
+
+.product{
+background:#0f172a;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.product img{
+width:80px;
+height:80px;
+object-fit:cover;
+border-radius:8px;
+}
+
+button{
+border:none;
+padding:8px 12px;
+background:red;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>TECH STORE</h2>
+
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="products.html">📦 Products</a>
+<a href="add-product.html">➕ Add Product</a>
+<a href="orders.html">🧾 Orders</a>
+<a href="coupons.html">🏷️ Coupons</a>
+
+</div>
+
+
+
+<div class="main">
+
+<h1>📦 المنتجات</h1>
+
+<div id="products"></div>
+
+</div>
+
+
+
+<script>
+
+/* حماية */
+if(!localStorage.getItem("admin")){
+location.href="/admin/login.html";
+}
+
+/* تحميل المنتجات */
+
+fetch("/api/products")
+.then(res=>res.json())
+.then(data=>{
+
+const box=document.getElementById("products");
+
+box.innerHTML="";
+
+data.forEach(p=>{
+
+box.innerHTML+=`
+
+<div class="product">
+
+<img src="${p.image}">
+
+<div style="flex:1;">
+<h3>${p.name}</h3>
+<p>${p.price} جنيه</p>
+</div>
+
+<button onclick="deleteProduct(${p.id})">
+حذف
+</button>
+
+</div>
+
+`;
+
+});
+
+});
+
+
+/* حذف */
+
+async function deleteProduct(id){
+
+if(!confirm("متأكد من الحذف؟")) return;
+
+await fetch("/api/products/"+id,{
+method:"DELETE"
+});
+
+location.reload();
+
+}
+
+</script>
+
+</body>
+</html>
