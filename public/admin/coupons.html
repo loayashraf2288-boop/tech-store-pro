@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Coupons</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+display:flex;
+background:#020617;
+color:white;
+}
+
+/* sidebar */
+
+.sidebar{
+width:230px;
+background:#0f172a;
+height:100vh;
+padding:20px;
+}
+
+.sidebar h2{
+color:#00ffd5;
+}
+
+.sidebar a{
+display:block;
+margin-top:15px;
+color:white;
+text-decoration:none;
+}
+
+/* main */
+
+.main{
+flex:1;
+padding:30px;
+}
+
+.card{
+background:#0f172a;
+padding:20px;
+border-radius:12px;
+max-width:500px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+}
+
+button{
+margin-top:10px;
+padding:10px;
+border:none;
+background:#00c896;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+.coupon{
+margin-top:10px;
+padding:10px;
+background:#020617;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+}
+
+.delete{
+background:red;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>TECH STORE</h2>
+
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="products.html">📦 Products</a>
+<a href="add-product.html">➕ Add Product</a>
+<a href="orders.html">🧾 Orders</a>
+<a href="coupons.html">🏷️ Coupons</a>
+
+</div>
+
+
+
+<div class="main">
+
+<h1>🏷️ أكواد الخصم</h1>
+
+<div class="card">
+
+<input id="code" placeholder="كود الخصم">
+
+<input id="discount" type="number" placeholder="نسبة الخصم %">
+
+<button onclick="createCoupon()">إنشاء الكود</button>
+
+</div>
+
+<h2>كل الأكواد</h2>
+
+<div id="list"></div>
+
+</div>
+
+
+
+<script>
+
+/* حماية */
+if(!localStorage.getItem("admin")){
+location.href="/admin/login.html";
+}
+
+
+/* تحميل الكوبونات */
+
+function loadCoupons(){
+
+fetch("/api/coupons")
+.then(res=>res.json())
+.then(data=>{
+
+const box=document.getElementById("list");
+
+box.innerHTML="";
+
+data.forEach(c=>{
+
+box.innerHTML+=`
+
+<div class="coupon">
+
+<div>
+🔥 ${c.code} — ${c.discount}%
+</div>
+
+<button class="delete" onclick="deleteCoupon('${c.code}')">
+حذف
+</button>
+
+</div>
+
+`;
+
+});
+
+});
+
+}
+
+loadCoupons();
+
+
+
+/* إنشاء */
+
+async function createCoupon(){
+
+if(!code.value || !discount.value){
+
+alert("املى البيانات");
+return;
+
+}
+
+await fetch("/api/coupons",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+code:code.value,
+discount:discount.value
+
+})
+
+});
+
+alert("🔥 تم إنشاء الكوبون");
+
+loadCoupons();
+
+}
+
+
+
+/* حذف */
+
+async function deleteCoupon(code){
+
+await fetch("/api/coupons/"+code,{
+method:"DELETE"
+});
+
+loadCoupons();
+
+}
+
+</script>
+
+</body>
+</html>
