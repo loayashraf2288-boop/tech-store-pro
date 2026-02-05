@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#020617;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+flex-direction:column;
+}
+
+input{
+padding:12px;
+width:250px;
+border-radius:8px;
+border:none;
+margin:10px 0;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:8px;
+background:#00ffa6;
+cursor:pointer;
+font-weight:bold;
+}
+
+#panel{
+display:none;
+width:90%;
+max-width:900px;
+}
+
+.card{
+background:#031b14;
+padding:20px;
+border-radius:12px;
+margin-top:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🔐 Admin Login</h1>
+
+<input id="code" placeholder="ادخل الباسورد">
+
+<button onclick="login()">دخول</button>
+
+
+<!-- PANEL -->
+
+<div id="panel">
+
+<h2>لوحة التحكم 🔥</h2>
+
+<div class="card">
+
+<h3>إضافة منتج</h3>
+
+<input id="name" placeholder="اسم المنتج">
+<input id="price" placeholder="السعر">
+<input id="discount" placeholder="خصم %">
+<input id="stock" placeholder="المخزون">
+<input id="image" placeholder="رابط الصورة">
+<input id="desc" placeholder="الوصف">
+
+<button onclick="addProduct()">إضافة</button>
+
+</div>
+
+</div>
+
+<script>
+
+async function login(){
+
+const code = document.getElementById("code").value;
+
+const res = await fetch("/admin-login",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({code})
+
+});
+
+const data = await res.json();
+
+if(data.success){
+
+document.querySelector("h1").style.display="none";
+document.querySelector("input").style.display="none";
+document.querySelector("button").style.display="none";
+
+document.getElementById("panel").style.display="block";
+
+}else{
+
+alert("الباسورد غلط ❌");
+
+}
+
+}
+
+
+
+/* ADD PRODUCT */
+
+async function addProduct(){
+
+await fetch("/api/products",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+name:name.value,
+price:+price.value,
+discount:+discount.value,
+stock:+stock.value,
+description:desc.value,
+images:[image.value]
+
+})
+
+});
+
+alert("تمت إضافة المنتج 🔥");
+
+}
+
+</script>
+
+</body>
+</html>
