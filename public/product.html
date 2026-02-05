@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Product</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f3f4f6;
+}
+
+/* container */
+
+.container{
+max-width:1100px;
+margin:auto;
+margin-top:40px;
+background:white;
+padding:30px;
+display:flex;
+gap:40px;
+border-radius:12px;
+}
+
+/* image */
+
+.image img{
+width:400px;
+object-fit:contain;
+}
+
+/* info */
+
+.price{
+color:#B12704;
+font-size:28px;
+font-weight:bold;
+}
+
+.old{
+text-decoration:line-through;
+color:gray;
+margin-left:10px;
+}
+
+.stock{
+color:green;
+margin-top:10px;
+}
+
+button{
+padding:14px;
+border:none;
+margin-top:15px;
+width:250px;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+}
+
+.cart{
+background:#ffd814;
+}
+
+.buy{
+background:#ffa41c;
+}
+
+.desc{
+margin-top:20px;
+line-height:1.6;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container" id="product"></div>
+
+
+
+<script>
+
+// نجيب id من اللينك
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+
+fetch("/api/products")
+.then(res=>res.json())
+.then(data=>{
+
+const product = data.find(p=>p.id == id);
+
+let priceHTML="";
+
+if(product.discount){
+
+let newPrice = Math.floor(
+product.price - (product.price*(product.discount/100))
+);
+
+priceHTML=`
+<span class="price">${newPrice} جنيه</span>
+<span class="old">${product.price}</span>
+`;
+
+}else{
+
+priceHTML=`<span class="price">${product.price} جنيه</span>`;
+
+}
+
+document.getElementById("product").innerHTML=`
+
+<div class="image">
+<img src="${product.image}">
+</div>
+
+<div>
+
+<h1>${product.name}</h1>
+
+${priceHTML}
+
+<div class="stock">
+✔ متوفر (${product.stock})
+</div>
+
+<div class="desc">
+${product.description || "لا يوجد وصف"}
+</div>
+
+<button class="cart"
+onclick='addToCart(${JSON.stringify(product)})'>
+🛒 أضف للسلة
+</button>
+
+<button class="buy"
+onclick='buyNow(${JSON.stringify(product)})'>
+⚡ شراء الآن
+</button>
+
+</div>
+
+`;
+
+});
+
+
+
+/* السلة */
+
+function addToCart(product){
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+let found = cart.find(i=>i.id === product.id);
+
+if(found){
+found.qty++;
+}else{
+product.qty=1;
+cart.push(product);
+}
+
+localStorage.setItem("cart",JSON.stringify(cart));
+
+alert("تمت الإضافة للسلة 🔥");
+
+}
+
+
+
+/* شراء مباشر */
+
+function buyNow(product){
+
+localStorage.setItem("cart",JSON.stringify([{
+...product,
+qty:1
+}]));
+
+location.href="cart.html";
+
+}
+
+</script>
+
+</body>
+  </html>
