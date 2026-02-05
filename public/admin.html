@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMIN</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#020617;
+color:white;
+margin:0;
+display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:230px;
+background:#0f172a;
+height:100vh;
+padding:20px;
+}
+
+.sidebar h2{
+color:#00ffd5;
+}
+
+.sidebar button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+background:#1e293b;
+color:white;
+cursor:pointer;
+border-radius:8px;
+}
+
+/* MAIN */
+
+.main{
+flex:1;
+padding:30px;
+}
+
+.card{
+background:#0f172a;
+padding:20px;
+border-radius:10px;
+max-width:600px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:none;
+border-radius:6px;
+}
+
+button.add{
+background:#00c896;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="login" style="margin:auto;text-align:center;">
+
+<h1>🔐 Admin Login</h1>
+
+<input id="password" placeholder="Password">
+
+<button onclick="login()">دخول</button>
+
+</div>
+
+
+
+<!-- PANEL -->
+
+<div id="panel" style="display:none;width:100%;">
+
+<div class="sidebar">
+
+<h2>TECH STORE</h2>
+
+<button onclick="show('add')">➕ إضافة منتج</button>
+<button onclick="show('products')">📦 المنتجات</button>
+<button onclick="show('orders')">🧾 الطلبات</button>
+<button onclick="show('coupons')">🏷️ كوبونات</button>
+
+<hr>
+
+<button onclick="goStore()">🏪 الذهاب للمتجر</button>
+
+</div>
+
+
+
+<div class="main">
+
+<!-- ADD -->
+<div id="add" class="card">
+
+<h2>إضافة منتج</h2>
+
+<input id="name" placeholder="اسم المنتج">
+<input id="price" placeholder="السعر">
+<input id="discount" placeholder="خصم %">
+<input id="stock" placeholder="الكمية">
+<input id="image" placeholder="رابط الصورة">
+<input id="desc" placeholder="الوصف">
+
+<button class="add" onclick="addProduct()">إضافة</button>
+
+</div>
+
+
+
+<!-- PRODUCTS -->
+<div id="products" class="card" style="display:none;">
+<h2>المنتجات</h2>
+<div id="productsList"></div>
+</div>
+
+
+
+<!-- ORDERS -->
+<div id="orders" class="card" style="display:none;">
+<h2>الطلبات</h2>
+<div id="ordersList"></div>
+</div>
+
+
+
+<!-- COUPONS -->
+<div id="coupons" class="card" style="display:none;">
+
+<h2>إنشاء كوبون</h2>
+
+<input id="code" placeholder="CODE">
+<input id="cdiscount" placeholder="الخصم %">
+
+<button onclick="createCoupon()">إنشاء</button>
+
+</div>
+
+
+</div>
+</div>
+
+
+
+<script>
+
+
+/* LOGIN */
+
+async function login(){
+
+const password=document.getElementById("password").value;
+
+const res=await fetch("/admin-login",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({password})
+
+});
+
+const data=await res.json();
+
+if(data.success){
+
+document.getElementById("login").style.display="none";
+document.getElementById("panel").style.display="flex";
+
+loadProducts();
+loadOrders();
+
+}else{
+
+alert("كلمة المرور غلط");
+
+}
+
+}
+
+
+
+/* NAV */
+
+function show(id){
+
+["add","products","orders","coupons"].forEach(sec=>{
+document.getElementById(sec).style.display="none";
+});
+
+document.getElementById(id).style.display="block";
+
+}
+
+
+
+/* GO STORE */
+
+function goStore(){
+location.href="/";
+}
+
+
+
+/* ADD PRODUCT */
+
+async function addProduct(){
+
+await fetch("/api/products",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+name:name.value,
+price:price.value,
+discount:discount.value,
+stock:stock.value,
+image:image.value,
+description:desc.value
+
+})
+
+});
+
+alert("تمت الإضافة 🔥");
+
+loadProducts();
+
+}
+
+
+
+/* LOAD PRODUCTS */
+
+async function loadProducts(){
+
+const res=await fetch("/api/products");
+const data=await res.json();
+
+const box=document.getElementById("productsList");
+
+box.innerHTML="";
+
+data.forEach(p=>{
+
+box.innerHTML+=`
+
+<div style="background:#020617;padding:10px;margin-top:10px;">
+${p.name} - ${p.price} جنيه
+
+<button onclick="deleteProduct(${p.id})">
+حذف
+</button>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+
+/* DELETE */
+
+async function deleteProduct(id){
+
+await fetch("/api/products/"+id,{
+method:"DELETE"
+});
+
+loadProducts();
+
+}
+
+
+
+/* LOAD ORDERS */
+
+async function loadOrders(){
+
+const res=await fetch("/api/orders");
+const data=await res.json();
+
+const box=document.getElementById("ordersList");
+
+box.innerHTML="";
+
+data.forEach(o=>{
+
+box.innerHTML+=`
+
+<div style="background:#020617;padding:10px;margin-top:10px;">
+
+👤 ${o.customer.name} <br>
+📞 ${o.customer.phone} <br>
+📍 ${o.customer.address}
+
+</div>
+
+`;
+
+});
+
+}
+
+
+
+/* COUPON */
+
+async function createCoupon(){
+
+await fetch("/api/coupons",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+code:code.value,
+discount:cdiscount.value
+
+})
+
+});
+
+alert("تم إنشاء الكوبون 🔥");
+
+}
+
+</script>
+
+</body>
+  </html>
