@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Checkout</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f3f4f6;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+margin-top:40px;
+display:flex;
+gap:20px;
+}
+
+/* cart */
+
+.cart{
+flex:2;
+background:white;
+padding:20px;
+border-radius:12px;
+}
+
+.item{
+display:flex;
+gap:15px;
+margin-top:15px;
+align-items:center;
+}
+
+.item img{
+width:80px;
+height:80px;
+object-fit:cover;
+}
+
+.total{
+font-size:22px;
+color:#B12704;
+margin-top:20px;
+}
+
+/* form */
+
+.checkout{
+flex:1;
+background:white;
+padding:20px;
+border-radius:12px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:15px;
+border:none;
+background:#ffd814;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+}
+
+.couponBox{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="cart">
+
+<h2>🛒 سلة المشتريات</h2>
+
+<div id="items"></div>
+
+<h3 class="total" id="total"></h3>
+
+</div>
+
+
+
+<div class="checkout">
+
+<h2>📦 بيانات الشحن</h2>
+
+<input id="name" placeholder="الاسم">
+<input id="phone" placeholder="رقم الهاتف">
+<input id="address" placeholder="العنوان">
+
+<div class="couponBox">
+<input id="coupon" placeholder="كود الخصم">
+<button onclick="applyCoupon()">تفعيل</button>
+</div>
+
+<button onclick="checkout()">
+💰 تأكيد الطلب
+</button>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+let discount = 0;
+
+drawCart();
+
+
+// رسم السلة
+
+function drawCart(){
+
+const box=document.getElementById("items");
+
+box.innerHTML="";
+
+let total=0;
+
+cart.forEach(p=>{
+
+let price = p.discount
+? Math.floor(p.price-(p.price*(p.discount/100)))
+: p.price;
+
+total += price * (p.qty || 1);
+
+box.innerHTML+=`
+
+<div class="item">
+
+<img src="${p.image}">
+
+<div>
+<h3>${p.name}</h3>
+<p>${price} جنيه</p>
+</div>
+
+</div>
+
+`;
+
+});
+
+total -= discount;
+
+document.getElementById("total").innerText=
+"الإجمالي: "+total+" جنيه";
+
+window.finalTotal = total;
+
+}
+
+
+
+// كود الخصم
+
+async function applyCoupon(){
+
+const code=document.getElementById("coupon").value;
+
+const res=await fetch("/api/check-coupon",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({code})
+
+});
+
+const data=await res.json();
+
+if(!data.valid){
+
+alert("كود غير صحيح ❌");
+return;
+
+}
+
+discount = Math.floor(window.finalTotal*(data.discount/100));
+
+alert("🔥 تم تطبيق الخصم");
+
+drawCart();
+
+}
+
+
+
+// تأكيد الطلب
+
+async function checkout(){
+
+if(!name.value || !phone.value || !address.value){
+
+alert("املى البيانات الأول ⚠️");
+return;
+
+}
+
+await fetch("/api/orders",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+name:name.value,
+phone:phone.value,
+address:address.value,
+cart,
+total:window.finalTotal
+
+})
+
+});
+
+alert("🔥 تم الطلب بنجاح!");
+
+localStorage.removeItem("cart");
+
+location.href="/";
+
+}
+
+</script>
+
+</body>
+</html>
