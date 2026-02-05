@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+display:flex;
+background:#020617;
+color:white;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:230px;
+background:#0f172a;
+height:100vh;
+padding:20px;
+}
+
+.sidebar h2{
+color:#00ffd5;
+}
+
+.sidebar a{
+display:block;
+margin-top:15px;
+color:white;
+text-decoration:none;
+}
+
+.main{
+flex:1;
+padding:40px;
+}
+
+.card{
+background:#0f172a;
+padding:25px;
+border-radius:12px;
+margin-bottom:20px;
+}
+
+button{
+padding:12px;
+border:none;
+background:#00c896;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>TECH STORE</h2>
+
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="products.html">📦 Products</a>
+<a href="add-product.html">➕ Add Product</a>
+<a href="orders.html">🧾 Orders</a>
+<a href="coupons.html">🏷️ Coupons</a>
+
+<hr>
+
+<button onclick="goStore()">🏪 الذهاب للمتجر</button>
+
+</div>
+
+
+<div class="main">
+
+<div class="card">
+<h2 id="productsCount"></h2>
+</div>
+
+<div class="card">
+<h2 id="ordersCount"></h2>
+</div>
+
+</div>
+
+
+
+<script>
+
+// حماية
+if(!localStorage.getItem("admin")){
+location.href="/admin/login.html";
+}
+
+// احصائيات
+
+fetch("/api/products")
+.then(r=>r.json())
+.then(data=>{
+document.getElementById("productsCount").innerText=
+"عدد المنتجات: "+data.length;
+});
+
+fetch("/api/orders")
+.then(r=>r.json())
+.then(data=>{
+document.getElementById("ordersCount").innerText=
+"عدد الطلبات: "+data.length;
+});
+
+
+function goStore(){
+location.href="/";
+}
+
+</script>
+
+</body>
+</html>
