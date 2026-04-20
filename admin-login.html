@@ -32,11 +32,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* خلفية إضاءة زرقاء خفيفة ورا البوكس */
             background-image: radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.1) 0%, transparent 50%);
         }
 
-        /* بوكس تسجيل الدخول */
         .login-container {
             background: var(--box-bg);
             backdrop-filter: blur(10px);
@@ -51,7 +49,6 @@
             position: relative;
         }
 
-        /* اللوجو */
         .logo-icon {
             width: 70px;
             height: 70px;
@@ -91,7 +88,6 @@
             background-color: rgba(0, 102, 255, 0.5);
         }
 
-        /* حقول الإدخال */
         .input-group {
             position: relative;
             margin-bottom: 20px;
@@ -137,7 +133,6 @@
             color: var(--primary-blue);
         }
 
-        /* زر الدخول */
         .btn-login {
             width: 100%;
             background: linear-gradient(90deg, #0044ff 0%, #0088ff 100%);
@@ -161,7 +156,6 @@
             transform: translateY(-2px);
         }
 
-        /* الفوتر الصغير */
         .secure-footer {
             margin-top: 25px;
             color: var(--primary-blue);
@@ -172,6 +166,13 @@
             gap: 5px;
         }
 
+        /* رسالة الخطأ */
+        #errorMessage {
+            color: #ff4d4d;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -182,6 +183,8 @@
         </div>
         <div class="brand-name">TECHSTORE</div>
         <div class="subtitle">لوحة التحكم - تسجيل الدخول</div>
+
+        <p id="errorMessage">بيانات الدخول غير صحيحة، حاول مرة أخرى!</p>
 
         <form id="adminLoginForm">
             <div class="input-group">
@@ -206,23 +209,34 @@
     </div>
 
     <script>
-        // كود بسيط عشان زرار العين يظهر ويخفي الباسورد
         const togglePassword = document.querySelector('#togglePassword');
         const password = document.querySelector('#password');
+        const errorMessage = document.getElementById('errorMessage');
 
-        togglePassword.addEventListener('click', function (e) {
+        // إظهار وإخفاء الباسورد
+        togglePassword.addEventListener('click', function () {
             const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
             password.setAttribute('type', type);
             this.classList.toggle('fa-eye-slash');
         });
 
-        // منع الفورم من التحميل مؤقتاً لحد ما نربط الداتا بيز
+        // التحقق من بيانات الدخول
         document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            // هنا هنبقى نحط كود التأكد من اليوزر والباسورد من فايربيس
-            // ولما ينجح الدخول هنحوله لصفحة الداشبورد:
-            // window.location.href = "admin-dashboard.html";
-            alert('سيتم ربط تسجيل الدخول بقاعدة البيانات لاحقاً للتحويل للوحة التحكم.');
+            
+            const userVal = document.getElementById('username').value;
+            const passVal = document.getElementById('password').value;
+
+            // اليوزر والباسورد اللي طلبتهم
+            if (userVal === 'loay' && passVal === '11211') {
+                // تسجيل دخول ناجح، هنحفظ الجلسة ونحول للوحة التحكم
+                localStorage.setItem('techstore_admin_logged_in', 'true');
+                window.location.href = "admin-dashboard.html";
+            } else {
+                // إظهار رسالة الخطأ
+                errorMessage.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
         });
     </script>
 </body>
