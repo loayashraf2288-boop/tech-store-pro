@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TECHSTORE | الرئيسية</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -19,496 +19,183 @@
             --neon-glow: 0 0 15px rgba(0, 102, 255, 0.4);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-light); 
+            overflow-x: hidden; 
+            position: relative;
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-light);
-            overflow-x: hidden;
+        /* --- تأثير البرق في الخلفية --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.15) 0%, transparent 60%);
+            z-index: -1;
+            animation: lightning 7s infinite;
+            pointer-events: none;
         }
+
+        @keyframes lightning {
+            0%, 95%, 98% { opacity: 0.2; }
+            96%, 99% { opacity: 1; background: radial-gradient(circle at 50% 20%, rgba(0, 102, 255, 0.4) 0%, transparent 80%); }
+            100% { opacity: 0.2; }
+        }
+
+        /* --- شريط تحميل التطبيق (الجديد) --- */
+        .top-app-bar {
+            background: linear-gradient(90deg, #001f4d 0%, #000 100%);
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--primary-blue);
+        }
+
+        .app-buttons { display: flex; gap: 10px; }
+        .app-btn {
+            padding: 5px 15px; border-radius: 20px; text-decoration: none; font-weight: bold;
+            display: flex; align-items: center; gap: 5px; transition: 0.3s;
+        }
+        .btn-android { background: var(--primary-blue); color: white; box-shadow: var(--neon-glow); }
+        .btn-ios { background: rgba(255,255,255,0.1); color: var(--text-gray); border: 1px solid var(--border-color); pointer-events: none; }
 
         /* --- Header --- */
         header {
-            background-color: var(--panel-bg);
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background-color: var(--panel-bg); padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            position: sticky; top: 0; z-index: 100;
+            flex-wrap: wrap; /* عشان ينزل تحت بعضه في الموبايل */
+            gap: 15px;
         }
 
-        .logo {
-            font-size: 26px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            letter-spacing: 1px;
-        }
+        .logo { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .logo i { color: var(--primary-blue); text-shadow: var(--neon-glow); animation: pulse 2s infinite; }
 
-        .logo i {
-            color: var(--primary-blue);
-            text-shadow: var(--neon-glow);
-        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); text-shadow: 0 0 25px #0066ff; } 100% { transform: scale(1); } }
 
-        .search-bar {
-            flex: 1;
-            max-width: 500px;
-            position: relative;
-            margin: 0 30px;
-        }
-
+        .search-bar { flex: 1; min-width: 200px; position: relative; }
         .search-bar input {
-            width: 100%;
-            padding: 12px 20px;
-            border-radius: 30px;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-light);
-            outline: none;
-            transition: all 0.3s;
+            width: 100%; padding: 10px 40px 10px 15px; border-radius: 30px;
+            background-color: var(--bg-color); border: 1px solid var(--border-color); color: white;
         }
+        .search-bar i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray); }
 
-        .search-bar input:focus {
-            border-color: var(--primary-blue);
-            box-shadow: var(--neon-glow);
-        }
-
-        .search-bar i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-gray);
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 25px;
-            align-items: center;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            color: var(--text-light);
-            transition: 0.3s;
-            position: relative;
-        }
-
-        .nav-item:hover { color: var(--primary-blue); }
-
-        .badge {
-            background-color: var(--primary-blue);
-            color: white;
-            font-size: 12px;
-            padding: 2px 6px;
-            border-radius: 50%;
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            box-shadow: var(--neon-glow);
-        }
+        .nav-icons { display: flex; gap: 20px; align-items: center; }
+        .nav-item { display: flex; align-items: center; gap: 8px; cursor: pointer; position: relative; font-size: 0.9rem; }
+        .badge { background: var(--primary-blue); color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; position: absolute; top: -8px; right: -8px; }
 
         /* --- Main Content --- */
-        .container {
-            display: flex;
-            padding: 30px;
-            gap: 30px;
-        }
+        .container { padding: 20px; }
 
-        .main-content {
-            flex: 1;
-        }
-
-        /* --- Hero Banner --- */
         .hero-banner {
             background: linear-gradient(135deg, #0a1324 0%, #001f4d 100%);
-            border-radius: 20px;
-            padding: 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--primary-blue);
-            box-shadow: inset 0 0 50px rgba(0, 102, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 40px;
+            border-radius: 20px; padding: 30px; display: flex; flex-direction: column;
+            border: 1px solid var(--primary-blue); box-shadow: inset 0 0 30px rgba(0, 102, 255, 0.2);
+            margin-bottom: 30px; text-align: center; position: relative; overflow: hidden;
         }
-
-        .hero-text h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .hero-text .discount {
-            font-size: 5rem;
-            font-weight: 800;
-            color: var(--primary-blue);
-            text-shadow: var(--neon-glow);
-            line-height: 1;
-        }
-
-        .btn-shop {
-            margin-top: 20px;
-            background: transparent;
-            border: 2px solid var(--primary-blue);
-            color: white;
-            padding: 10px 30px;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: 600;
-        }
-
-        .btn-shop:hover {
-            background: var(--primary-blue);
-            box-shadow: var(--neon-glow);
-        }
-
-        /* --- Sections --- */
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .hero-banner h1 { font-size: 1.8rem; margin-bottom: 10px; z-index: 2; }
+        .hero-banner .discount { font-size: 3.5rem; font-weight: 800; color: var(--primary-blue); text-shadow: var(--neon-glow); z-index: 2; }
+        .btn-shop { background: transparent; border: 2px solid var(--primary-blue); color: white; padding: 8px 25px; border-radius: 30px; margin-top: 15px; font-weight: bold; z-index: 2; }
 
         /* --- Categories --- */
-        .categories {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 40px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-        }
-
+        .categories { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
         .category-card {
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            padding: 20px;
-            min-width: 120px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
+            background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 15px;
+            padding: 15px; min-width: 100px; text-align: center; cursor: pointer; flex-shrink: 0;
         }
-
-        .category-card:hover {
-            border-color: var(--primary-blue);
-            box-shadow: var(--neon-glow);
-            transform: translateY(-5px);
-        }
-
-        .category-card i {
-            font-size: 2rem;
-            color: var(--primary-blue);
-            margin-bottom: 10px;
-        }
+        .category-card i { font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 10px; }
 
         /* --- Products Grid --- */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
+        .section-title { font-size: 1.2rem; margin-bottom: 15px; display: flex; justify-content: space-between; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+        .product-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 12px; position: relative; }
+        .product-img { width: 100%; height: 120px; background: var(--bg-color); border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--border-color); }
+        .product-title { font-size: 0.9rem; margin-bottom: 5px; height: 40px; overflow: hidden; }
+        .product-price { font-size: 1.1rem; color: var(--primary-blue); font-weight: bold; margin-bottom: 10px; }
+        .btn-add { width: 100%; background: var(--primary-blue); color: white; border: none; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-        .product-card {
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            padding: 15px;
-            position: relative;
-            transition: 0.3s;
-        }
-
-        .product-card:hover {
-            border-color: var(--primary-blue);
-            box-shadow: var(--neon-glow);
-        }
-
-        .product-tag {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: var(--primary-blue);
-            font-size: 12px;
-            padding: 3px 8px;
-            border-radius: 5px;
-        }
-
-        .product-img {
-            width: 100%;
-            height: 180px;
-            background-color: var(--bg-color);
-            border-radius: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: var(--primary-blue); /* خليت لون الأيقونة أزرق عشان تنطق */
-        }
-
-        .product-title {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .stars { color: #ffc107; font-size: 0.9rem; margin-bottom: 10px; }
-
-        .product-price {
-            font-size: 1.3rem;
-            color: var(--primary-blue);
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .btn-add {
-            width: 100%;
-            background-color: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .btn-add:hover { background-color: var(--hover-blue); }
-
-        /* --- Sidebar Cart --- */
+        /* --- Sidebar Cart (Responsive) --- */
         .sidebar-cart {
-            width: 320px;
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            padding: 20px;
-            height: fit-content;
+            width: 100%; max-width: 350px; background: var(--panel-bg); border-right: 1px solid var(--border-color);
+            padding: 20px; height: 100vh; overflow-y: auto; display: none; position: fixed; right: 0; top: 0; z-index: 1000;
         }
-
-        .cart-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
+        
+        /* --- ظبط الموبايل (Media Queries) --- */
+        @media (max-width: 768px) {
+            .top-app-bar { flex-direction: column; gap: 10px; text-align: center; }
+            .search-bar { order: 3; width: 100%; } /* تنزيل البحث سطر لوحده */
+            .nav-item span:not(.badge) { display: none; } /* إخفاء كلام الزراير في الهيدر عشان الزحمة */
+            header { padding: 10px; }
         }
-
-        .cart-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background-color: var(--bg-color);
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        .cart-item-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
-        }
-
-        .cart-item-info h4 { font-size: 0.9rem; }
-        .cart-item-info p { color: var(--primary-blue); font-weight: bold; }
-
-        .qty-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 5px;
-            background-color: var(--panel-bg);
-            padding: 2px 8px;
-            border-radius: 5px;
-            width: fit-content;
-        }
-
-        .qty-controls button {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-            padding: 0 5px;
-        }
-
-        .cart-summary {
-            margin-top: 20px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .total-row {
-            font-size: 1.3rem;
-            color: var(--primary-blue);
-            font-weight: bold;
-        }
-
-        .btn-checkout {
-            width: 100%;
-            background-color: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 15px;
-            font-size: 1.1rem;
-            box-shadow: var(--neon-glow);
-        }
-
-        /* --- Footer --- */
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: var(--panel-bg);
-            border-top: 1px solid var(--border-color);
-            margin-top: 40px;
-        }
-
-        .features-bar {
-            display: flex;
-            justify-content: center;
-            gap: 50px;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--text-gray);
-        }
-        .feature-item i { color: var(--primary-blue); font-size: 1.5rem; }
-
-        .copyright { color: var(--primary-blue); font-weight: bold; letter-spacing: 1px; }
-
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">
-            <i class="fa-solid fa-bolt"></i> TECHSTORE
+    <div class="top-app-bar">
+        <div>حمل تطبيق TECHSTORE الآن واستمتع بتجربة تسوق أسرع!</div>
+        <div class="app-buttons">
+            <a href="https://github.com/loayashraf2288-boop/tech-store-pro/releases/download/v1.0/_TECH_STORE_19748700.apk" class="app-btn btn-android"><i class="fa-brands fa-android"></i> Android</a>
+            <a href="#" class="app-btn btn-ios"><i class="fa-brands fa-apple"></i> قريباً iOS</a>
         </div>
+    </div>
+
+    <header>
+        <div class="logo"><i class="fa-solid fa-bolt"></i> TECHSTORE</div>
         <div class="search-bar">
             <i class="fa-solid fa-search"></i>
             <input type="text" placeholder="ابحث عن منتج...">
         </div>
         <div class="nav-icons">
-            <div class="nav-item">
-                <i class="fa-regular fa-heart"></i>
-                <span>المفضلة</span>
-                <span class="badge">0</span>
-            </div>
-            <div class="nav-item" onclick="window.location.href='admin-login.html'">
-                <i class="fa-regular fa-user"></i>
-                <span>حسابي (الأدمن)</span>
-            </div>
-            <div class="nav-item">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span>السلة</span>
-                <span class="badge">0</span>
-            </div>
+            <div class="nav-item"><i class="fa-regular fa-user"></i><span>حسابي</span></div>
+            <div class="nav-item cart-trigger"><i class="fa-solid fa-cart-shopping"></i><span>السلة</span><span class="badge cart-count">0</span></div>
         </div>
     </header>
 
     <div class="container">
-        <div class="main-content">
-            
-            <div class="hero-banner">
-                <div class="hero-text">
-                    <h1>عروض الصيف الكبرى</h1>
-                    <p>خصومات تصل حتى</p>
-                    <div class="discount">50%</div>
-                    <button class="btn-shop">تسوق الآن</button>
-                </div>
-                <div style="font-size: 100px; color: rgba(255,255,255,0.05);"><i class="fa-solid fa-laptop"></i></div>
-            </div>
-
-            <div class="section-title">
-                <h3>الأقسام</h3>
-            </div>
-            <div class="categories">
-                <div class="category-card"><i class="fa-solid fa-mobile-screen"></i><p>هواتف</p></div>
-                <div class="category-card"><i class="fa-solid fa-laptop"></i><p>لابتوبات</p></div>
-                <div class="category-card"><i class="fa-solid fa-headphones"></i><p>سماعات</p></div>
-                <div class="category-card"><i class="fa-solid fa-tablet-screen-button"></i><p>أجهزة لوحية</p></div>
-                <div class="category-card"><i class="fa-solid fa-tv"></i><p>شاشات</p></div>
-                <div class="category-card"><i class="fa-solid fa-gamepad"></i><p>إكسسوارات</p></div>
-            </div>
-
-            <div class="section-title">
-                <h3>أحدث المنتجات</h3>
-                <a href="#" style="color: var(--text-gray); text-decoration: none;">عرض المزيد</a>
-            </div>
-            
-            <div class="products-grid">
-                </div>
+        <div class="hero-banner">
+            <h1>عروض الصيف الكبرى</h1>
+            <p>خصومات تصل حتى</p>
+            <div class="discount">50%</div>
+            <button class="btn-shop">تسوق الآن</button>
         </div>
 
-        <aside class="sidebar-cart">
-            <div class="cart-header">
-                <h3>سلة التسوق</h3>
-                <i class="fa-solid fa-xmark" style="cursor: pointer; font-size: 1.2rem;"></i>
-            </div>
-            
-            <div class="cart-items-container">
-                </div>
+        <div class="section-title"><h3>الأقسام</h3></div>
+        <div class="categories">
+            <div class="category-card"><i class="fa-solid fa-mobile-screen"></i><p>هواتف</p></div>
+            <div class="category-card"><i class="fa-solid fa-laptop"></i><p>لابتوبات</p></div>
+            <div class="category-card"><i class="fa-solid fa-headphones"></i><p>سماعات</p></div>
+            <div class="category-card"><i class="fa-solid fa-tv"></i><p>شاشات</p></div>
+        </div>
 
-            <div class="cart-summary">
-                <div class="summary-row">
-                    <span>المجموع الفرعي</span>
-                    <span>0 جنيه</span>
-                </div>
-                <div class="summary-row">
-                    <span>الخصم</span>
-                    <span>0 جنيه</span>
-                </div>
-                <div class="summary-row total-row">
-                    <span>الإجمالي</span>
-                    <span>0 جنيه</span>
-                </div>
-                <button class="btn-checkout">إتمام الطلب</button>
+        <div class="section-title"><h3>أحدث المنتجات</h3></div>
+        <div class="products-grid" id="productsContainer">
+            <div style="text-align: center; width: 100%; grid-column: 1/-1; padding: 50px;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 30px; color: var(--primary-blue);"></i>
+                <p style="margin-top: 10px;">جاري تحميل المنتجات...</p>
             </div>
-        </aside>
+        </div>
     </div>
 
-    <footer>
-        <div class="features-bar">
-            <div class="feature-item"><i class="fa-solid fa-truck-fast"></i> <span>شحن سريع خلال 24 ساعة</span></div>
-            <div class="feature-item"><i class="fa-solid fa-rotate-left"></i> <span>ضمان استرجاع 14 يوم مجاني</span></div>
-            <div class="feature-item"><i class="fa-solid fa-shield-halved"></i> <span>دفع آمن 100% حماية لبياناتك</span></div>
-            <div class="feature-item"><i class="fa-solid fa-headset"></i> <span>دعم فني 24/7 لجميع استفساراتك</span></div>
+    <aside class="sidebar-cart" id="cartSidebar">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            <h3>سلة التسوق</h3>
+            <i class="fa-solid fa-xmark" id="closeCartBtn" style="cursor: pointer; font-size: 1.2rem;"></i>
         </div>
-        <div class="copyright">جميع حقوق الملكية لـ Loay &copy; 2026 - TECHSTORE</div>
-    </footer>
+        <div class="cart-items-container" id="cartItems"></div>
+        <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; color: var(--primary-blue);">
+                <span>الإجمالي:</span>
+                <span id="cartTotal">0 جنيه</span>
+            </div>
+            <button class="btn-add" id="checkoutBtn" style="margin-top: 15px; padding: 12px; font-size: 1.1rem; box-shadow: var(--neon-glow);">إتمام الطلب <i class="fa-brands fa-whatsapp"></i></button>
+        </div>
+    </aside>
 
     <script src="store.js"></script>
 </body>
