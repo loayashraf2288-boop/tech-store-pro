@@ -2,132 +2,997 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TECHSTORE - الإدارة</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TECHSTORE - لوحة الإدارة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
-:root{--primary:#0057FF;--bg:#050A14;--card:#0D1626;--text:#E8F0FF;--border:rgba(0,87,255,0.2);}
-body{font-family:'Cairo',sans-serif; background:var(--bg); color:var(--text); margin:0;}
-.sidebar{width:250px; background:var(--card); height:100vh; position:fixed; right:0; border-left:1px solid var(--border); padding:20px;}
-.main{margin-right:250px; padding:30px;}
-.nav-item{padding:12px; cursor:pointer; border-radius:8px; margin-bottom:5px; transition:0.3s; display:flex; align-items:center; gap:10px;}
-.nav-item:hover, .nav-item.active{background:var(--primary); color:#fff;}
-.card{background:var(--card); padding:20px; border-radius:15px; border:1px solid var(--border); margin-bottom:20px;}
-table{width:100%; border-collapse:collapse; background:var(--card); border-radius:10px; overflow:hidden;}
-th, td{padding:12px; text-align:right; border-bottom:1px solid var(--border); font-size:14px;}
-.btn{padding:8px 15px; border-radius:5px; border:none; cursor:pointer; font-weight:700;}
-.modal{position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center; z-index:2000;}
-.modal.open{display:flex;}
-.modal-content{background:var(--card); padding:25px; border-radius:15px; width:90%; max-width:500px;}
-@media(max-width:768px){ .sidebar{display:none;} .main{margin-right:0;} }
+:root{--primary:#0057FF;--primary-dark:#0040CC;--primary-glow:rgba(0,87,255,0.3);--accent:#00D4FF;--bg-dark:#050A14;--bg-card:#0D1626;--bg-card2:#111D35;--text:#E8F0FF;--text-muted:#7A90B8;--border:rgba(0,87,255,0.2);--success:#00E676;--warning:#FFB300;--danger:#FF3D57;--gold:#FFD700;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--bg-dark);color:var(--text);overflow-x:hidden;}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg-dark);}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px;}
+
+/* TOAST */
+#toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;width:90%;max-width:360px;}
+.toast{background:linear-gradient(135deg,var(--bg-card2),#1a2a4a);border:1px solid var(--primary);border-radius:12px;padding:14px 24px;color:var(--text);font-size:14px;font-weight:600;box-shadow:0 8px 32px rgba(0,87,255,0.3);display:flex;align-items:center;gap:10px;width:100%;animation:toastIn 0.4s ease;}
+.toast.success{border-color:var(--success);}.toast.error{border-color:var(--danger);}.toast.warning{border-color:var(--warning);}
+@keyframes toastIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+
+/* LOGIN */
+#login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-box{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:40px;width:380px;max-width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.logo-icon-big{width:64px;height:64px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px;box-shadow:0 0 30px var(--primary-glow);}
+.form-control{width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-family:'Cairo',sans-serif;font-size:14px;outline:none;transition:border-color 0.3s;margin-bottom:12px;}
+.form-control:focus{border-color:var(--primary);}
+.btn{padding:10px 20px;border-radius:9px;border:none;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:14px;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 4px 15px var(--primary-glow);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 25px var(--primary-glow);}
+.btn-outline{background:transparent;color:var(--primary);border:1px solid var(--primary);}
+.btn-outline:hover{background:var(--primary);color:#fff;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-success{background:var(--success);color:#000;}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-warning{background:var(--warning);color:#000;}
+
+/* ADMIN LAYOUT */
+#admin-page{display:none;}
+.admin-wrap{display:flex;min-height:100vh;}
+.sidebar{width:250px;background:var(--bg-card);border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100%;z-index:100;display:flex;flex-direction:column;overflow-y:auto;}
+.sidebar-logo{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.logo-icon-sm{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.nav-item{padding:13px 20px;cursor:pointer;font-weight:600;font-size:14px;color:var(--text-muted);display:flex;align-items:center;gap:10px;transition:all 0.2s;border-right:3px solid transparent;}
+.nav-item:hover{background:rgba(0,87,255,0.08);color:var(--text);}
+.nav-item.active{background:rgba(0,87,255,0.12);color:var(--primary);border-right-color:var(--primary);}
+.nav-item.logout{color:var(--danger);}
+.main-content{margin-right:250px;padding:28px;flex:1;min-width:0;}
+
+/* TABS */
+.tab{display:none;}.tab.active{display:block;}
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.page-title{font-size:1.5rem;font-weight:900;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;}
+.stat-num{font-size:2rem;font-weight:900;color:var(--primary);}
+.stat-lbl{font-size:13px;color:var(--text-muted);margin-top:4px;}
+
+/* TABLE */
+.table-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:auto;}
+table{width:100%;border-collapse:collapse;}
+th{background:var(--bg-card2);padding:12px 14px;font-size:13px;color:var(--text-muted);font-weight:600;text-align:right;white-space:nowrap;}
+td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+
+/* FORM */
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:13px;color:var(--text-muted);margin-bottom:6px;font-weight:600;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;}
+
+/* IMAGE UPLOAD */
+.img-upload-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px;}
+.img-upload-slot{aspect-ratio:1;border:2px dashed var(--border);border-radius:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--text-muted);font-size:12px;transition:all 0.3s;position:relative;overflow:hidden;background:var(--bg-card2);}
+.img-upload-slot:hover{border-color:var(--primary);color:var(--primary);}
+.img-upload-slot.has-img{border-style:solid;border-color:var(--primary);}
+.img-upload-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px;}
+.img-upload-slot .remove-img{position:absolute;top:4px;left:4px;width:22px;height:22px;background:var(--danger);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;z-index:2;cursor:pointer;}
+.img-upload-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.img-upload-slot .slot-num{font-size:18px;font-weight:900;color:var(--border);}
+.upload-progress{margin-top:8px;display:none;}
+.progress-bar{height:4px;background:var(--bg-card2);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));width:0;transition:width 0.3s;}
+
+/* BADGE */
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-success{background:rgba(0,230,118,0.15);color:var(--success);}
+.badge-warning{background:rgba(255,179,0,0.15);color:var(--warning);}
+.badge-danger{background:rgba(255,61,87,0.15);color:var(--danger);}
+.badge-info{background:rgba(0,212,255,0.15);color:var(--accent);}
+
+/* CHAT */
+.chat-layout{display:grid;grid-template-columns:280px 1fr;gap:16px;height:520px;}
+.chat-sessions{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow-y:auto;}
+.chat-session-item{padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.2s;}
+.chat-session-item:hover,.chat-session-item.active{background:rgba(0,87,255,0.1);}
+.chat-main{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;}
+.chat-main-header{padding:14px 18px;border-bottom:1px solid var(--border);font-weight:700;}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;}
+.chat-msg{max-width:75%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;}
+.chat-msg.from-user{background:rgba(0,87,255,0.2);align-self:flex-end;border-bottom-right-radius:4px;}
+.chat-msg.from-admin{background:var(--bg-card2);align-self:flex-start;border-bottom-left-radius:4px;}
+.chat-reply{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.chat-reply input{flex:1;background:var(--bg-dark);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-family:'Cairo',sans-serif;font-size:13px;outline:none;}
+
+/* ===== ORDER DETAIL MODAL ===== */
+.order-modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);z-index:5000;display:none;align-items:center;justify-content:center;padding:20px;}
+.order-modal.open{display:flex;}
+.order-modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;animation:modalIn 0.35s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:scale(1);}}
+.order-modal-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg-card);z-index:1;}
+.order-modal-body{padding:22px;}
+.order-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.order-info-item{background:var(--bg-card2);border-radius:10px;padding:12px;}
+.order-info-label{font-size:11px;color:var(--text-muted);margin-bottom:4px;}
+.order-info-value{font-weight:700;font-size:14px;}
+.order-products-title{font-weight:700;font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.order-product-item{background:var(--bg-card2);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;gap:14px;align-items:center;margin-bottom:10px;}
+.order-product-img{width:70px;height:70px;object-fit:cover;border-radius:10px;background:var(--bg-dark);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.order-product-info{flex:1;}
+.order-product-name{font-weight:700;font-size:14px;margin-bottom:4px;}
+.order-product-qty{font-size:13px;color:var(--text-muted);margin-bottom:4px;}
+.order-product-price{font-size:14px;font-weight:900;color:var(--primary);}
+
+/* ===== COUPONS ===== */
+.coupon-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+.coupon-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:14px;padding:16px;position:relative;overflow:hidden;}
+.coupon-card::before{content:'';position:absolute;top:-30px;left:-30px;width:100px;height:100px;background:radial-gradient(circle,rgba(0,87,255,0.1),transparent 70%);}
+.coupon-code{font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:900;color:var(--primary);letter-spacing:2px;margin-bottom:6px;}
+.coupon-value{font-size:1.4rem;font-weight:900;color:var(--success);}
+.coupon-meta{font-size:12px;color:var(--text-muted);margin-top:4px;}
+.coupon-actions{display:flex;gap:8px;margin-top:10px;}
+.type-toggle{display:flex;gap:8px;margin-bottom:12px;}
+.type-btn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-muted);cursor:pointer;font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;transition:all 0.2s;}
+.type-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+/* ===== ADS ===== */
+.ads-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:16px;}
+.ad-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.3s;}
+.ad-card:hover{border-color:var(--primary);box-shadow:0 8px 30px var(--primary-glow);}
+.ad-media-wrap{position:relative;aspect-ratio:16/9;background:var(--bg-dark);overflow:hidden;}
+.ad-media-wrap img{width:100%;height:100%;object-fit:cover;}
+.ad-media-wrap video{width:100%;height:100%;object-fit:cover;}
+.ad-media-type{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.7);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;display:flex;align-items:center;gap:4px;}
+.ad-info{padding:14px;}
+.ad-title{font-weight:700;font-size:14px;margin-bottom:4px;}
+.ad-actions{display:flex;gap:8px;margin-top:10px;}
+.ad-upload-area{border:2px dashed var(--border);border-radius:14px;padding:30px;text-align:center;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;}
+.ad-upload-area:hover{border-color:var(--primary);background:rgba(0,87,255,0.04);}
+.ad-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.ad-preview{margin-top:12px;display:none;}
+.ad-preview img,.ad-preview video{max-width:100%;border-radius:10px;max-height:200px;object-fit:cover;}
+
+/* MOBILE */
+@media(max-width:900px){
+  .form-grid{grid-template-columns:1fr;}
+  .coupon-grid{grid-template-columns:1fr;}
+  .order-info-grid{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  .sidebar{width:200px;}
+  .main-content{margin-right:200px;padding:14px;}
+  .img-upload-grid{grid-template-columns:repeat(3,1fr);}
+  .chat-layout{grid-template-columns:1fr;height:auto;}
+  .chat-sessions{height:200px;}
+  .chat-main{height:400px;}
+}
+@media(max-width:520px){
+  .sidebar{position:fixed;transform:translateX(100%);transition:transform 0.3s;z-index:500;width:240px;}
+  .sidebar.open{transform:translateX(0);}
+  .main-content{margin-right:0;padding:12px;}
+  .mobile-menu-btn{display:flex;}
+  .img-upload-grid{grid-template-columns:repeat(2,1fr);}
+  .page-title{font-size:1.2rem;}
+  .ads-grid{grid-template-columns:1fr;}
+}
+.mobile-menu-btn{display:none;position:fixed;top:14px;right:14px;z-index:600;width:42px;height:42px;background:var(--primary);border:none;border-radius:10px;color:#fff;font-size:18px;align-items:center;justify-content:center;cursor:pointer;}
+.overlay-sidebar{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:400;}
 </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <h2 style="color:var(--primary)">TECHSTORE</h2>
-    <div class="nav-item active" onclick="showTab('products')"><i class="fas fa-box"></i> المنتجات</div>
-    <div class="nav-item" onclick="showTab('orders')"><i class="fas fa-shopping-bag"></i> الطلبات</div>
-    <div class="nav-item" onclick="showTab('coupons')"><i class="fas fa-percentage"></i> أكواد الخصم</div>
+<div id="toast-container"></div>
+
+<!-- LOGIN -->
+<div id="login-page">
+  <div class="login-box">
+    <div class="logo-icon-big">⚡</div>
+    <div style="font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;margin-bottom:4px">TECHSTORE</div>
+    <div style="color:var(--text-muted);font-size:13px;margin-bottom:28px">لوحة تحكم الإدارة</div>
+    <input type="text" class="form-control" id="login-user" placeholder="اسم المستخدم">
+    <input type="password" class="form-control" id="login-pass" placeholder="كلمة المرور" onkeypress="if(event.key==='Enter')doLogin()">
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px" onclick="doLogin()">
+      <i class="fas fa-sign-in-alt"></i> دخول
+    </button>
+  </div>
 </div>
 
-<div class="main">
-    <div id="tab-products" class="tab-content">
-        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-            <h2>إدارة المنتجات</h2>
-            <button class="btn" style="background:var(--primary); color:#fff" onclick="alert('استخدم فورم الإضافة الأصلية عندك')">إضافة منتج</button>
+<button class="mobile-menu-btn" id="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+<div class="overlay-sidebar" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- ADMIN -->
+<div id="admin-page">
+  <div class="admin-wrap">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon-sm">⚡</div>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:0.95rem;font-weight:900">TECHSTORE</div>
+          <div style="font-size:11px;color:var(--accent)" id="admin-name-display">ADMIN</div>
         </div>
-        <div id="products-list"></div>
+      </div>
+      <div class="nav-item active" onclick="showTab('dashboard',this)"><i class="fas fa-chart-bar"></i> لوحة المعلومات</div>
+      <div class="nav-item" onclick="showTab('products',this)"><i class="fas fa-box"></i> المنتجات</div>
+      <div class="nav-item" onclick="showTab('add-product',this)"><i class="fas fa-plus-circle"></i> إضافة منتج</div>
+      <div class="nav-item" onclick="showTab('orders',this)"><i class="fas fa-shopping-bag"></i> الطلبات</div>
+      <div class="nav-item" onclick="showTab('coupons',this)"><i class="fas fa-tag"></i> أكواد الخصم</div>
+      <div class="nav-item" onclick="showTab('ads',this)"><i class="fas fa-photo-video"></i> الإعلانات</div>
+      <div class="nav-item" onclick="showTab('support',this)"><i class="fas fa-headset"></i> الدعم الفني</div>
+      <div class="nav-item" onclick="showTab('admins',this)"><i class="fas fa-users-cog"></i> المديرين</div>
+      <div style="flex:1"></div>
+      <div class="nav-item logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</div>
     </div>
 
-    <div id="tab-orders" class="tab-content" style="display:none">
-        <h2>الطلبات الواردة</h2>
-        <table>
-            <thead><tr><th>العميل</th><th>الموبايل</th><th>الإجمالي</th><th>التفاصيل</th></tr></thead>
-            <tbody id="orders-tbody"></tbody>
-        </table>
-    </div>
+    <!-- CONTENT -->
+    <div class="main-content">
 
-    <div id="tab-coupons" class="tab-content" style="display:none">
-        <h2>أكواد الخصم</h2>
+      <!-- DASHBOARD -->
+      <div class="tab active" id="tab-dashboard">
+        <div class="page-header"><h2 class="page-title">لوحة المعلومات</h2></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-num" id="s-products">-</div><div class="stat-lbl">منتج</div></div>
+          <div class="stat-card"><div class="stat-num" id="s-orders">-</div><div class="stat-lbl">طلب</div></div>
+          <div class="stat-card"><div class="stat-num" id="s-chats">-</div><div class="stat-lbl">محادثة</div></div>
+          <div class="stat-card"><div class="stat-num" id="s-coupons">-</div><div class="stat-lbl">كود خصم</div></div>
+          <div class="stat-card"><div class="stat-num" id="s-admins">-</div><div class="stat-lbl">مدير</div></div>
+        </div>
         <div class="card">
-            <input type="text" id="cp-name" placeholder="اسم الكود (SAVE20)" style="padding:10px; border-radius:5px; border:1px solid var(--border); background:#000; color:#fff;">
-            <input type="number" id="cp-val" placeholder="النسبة (0.20 للـ 20%)" style="padding:10px; border-radius:5px; border:1px solid var(--border); background:#000; color:#fff;">
-            <button class="btn" style="background:var(--primary); color:#fff" onclick="addCoupon()">إضافة كود</button>
+          <div style="font-weight:700;margin-bottom:16px;color:var(--text-muted)">⏱ آخر الطلبات</div>
+          <div id="recent-orders"></div>
         </div>
-        <div id="coupons-list"></div>
-    </div>
+      </div>
+
+      <!-- PRODUCTS LIST -->
+      <div class="tab" id="tab-products">
+        <div class="page-header">
+          <h2 class="page-title">المنتجات</h2>
+          <button class="btn btn-primary" onclick="showTab('add-product')"><i class="fas fa-plus"></i> إضافة</button>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>الصورة</th><th>الاسم</th><th>القسم</th><th>السعر</th><th>الطلبات</th><th>إجراء</th></tr></thead>
+          <tbody id="products-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ADD/EDIT PRODUCT -->
+      <div class="tab" id="tab-add-product">
+        <div class="page-header">
+          <h2 class="page-title" id="form-title">إضافة منتج جديد</h2>
+          <button class="btn btn-outline" onclick="resetForm()"><i class="fas fa-times"></i> مسح</button>
+        </div>
+        <div class="card">
+          <input type="hidden" id="edit-id">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>اسم المنتج *</label>
+              <input type="text" class="form-control" id="p-name" placeholder="مثال: iPhone 16 Pro">
+            </div>
+            <div class="form-group">
+              <label>القسم *</label>
+              <select class="form-control" id="p-cat">
+                <option>موبايلات</option><option>لابتوبات</option><option>شواحن</option>
+                <option>سماعات</option><option>ساعات</option><option>أيباد</option>
+                <option>شاشات</option><option>إكسسوارات</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>السعر (جنيه) *</label>
+              <input type="number" class="form-control" id="p-price" placeholder="25000">
+            </div>
+            <div class="form-group">
+              <label>السعر قبل الخصم</label>
+              <input type="number" class="form-control" id="p-old-price" placeholder="اختياري">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>الوصف</label>
+            <textarea class="form-control" id="p-desc" rows="3" style="resize:vertical" placeholder="وصف المنتج..."></textarea>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-images" style="color:var(--primary)"></i> الصور (حتى 8 صور)</label>
+            <div class="img-upload-grid" id="img-slots"></div>
+            <div class="upload-progress" id="upload-progress">
+              <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px" id="upload-status">جاري الرفع...</div>
+              <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="padding:12px 28px" onclick="saveProduct()">
+            <i class="fas fa-save"></i> حفظ المنتج
+          </button>
+        </div>
+      </div>
+
+      <!-- ORDERS -->
+      <div class="tab" id="tab-orders">
+        <div class="page-header">
+          <h2 class="page-title">الطلبات الواردة</h2>
+          <button class="btn btn-outline btn-sm" onclick="loadOrders()"><i class="fas fa-sync"></i> تحديث</button>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>#</th><th>الاسم</th><th>الموبايل</th><th>الإجمالي</th><th>الكوبون</th><th>التاريخ</th><th>التفاصيل</th><th>حذف</th></tr></thead>
+          <tbody id="orders-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ===== COUPONS TAB ===== -->
+      <div class="tab" id="tab-coupons">
+        <div class="page-header"><h2 class="page-title">🏷️ أكواد الخصم</h2></div>
+        <div class="coupon-grid">
+          <!-- ADD COUPON FORM -->
+          <div class="card">
+            <div style="font-weight:700;margin-bottom:18px;font-size:15px">إضافة كود خصم جديد</div>
+            <div class="form-group">
+              <label>الكود *</label>
+              <input type="text" class="form-control" id="c-code" placeholder="مثال: SAVE50" style="text-transform:uppercase;font-family:'Orbitron',monospace;letter-spacing:2px;">
+            </div>
+            <div class="form-group">
+              <label>نوع الخصم</label>
+              <div class="type-toggle">
+                <button class="type-btn active" id="type-percent" onclick="setCouponType('percent')">
+                  <i class="fas fa-percent"></i> نسبة مئوية
+                </button>
+                <button class="type-btn" id="type-fixed" onclick="setCouponType('fixed')">
+                  <i class="fas fa-pound-sign"></i> مبلغ ثابت
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label id="c-val-label">قيمة الخصم (%) *</label>
+              <input type="number" class="form-control" id="c-value" placeholder="مثال: 20">
+            </div>
+            <div class="form-group">
+              <label>الحالة</label>
+              <select class="form-control" id="c-active">
+                <option value="1">✅ مفعّل</option>
+                <option value="0">❌ معطّل</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveCoupon()">
+              <i class="fas fa-plus"></i> إضافة الكود
+            </button>
+          </div>
+          <!-- COUPONS LIST -->
+          <div>
+            <div style="font-weight:700;margin-bottom:14px;font-size:15px">الأكواد المتاحة</div>
+            <div id="coupons-list">
+              <div style="color:var(--text-muted);font-size:13px;text-align:center;padding:20px">جاري التحميل...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ADS TAB ===== -->
+      <div class="tab" id="tab-ads">
+        <div class="page-header">
+          <h2 class="page-title">📢 الإعلانات</h2>
+          <button class="btn btn-outline btn-sm" onclick="loadAds()"><i class="fas fa-sync"></i> تحديث</button>
+        </div>
+
+        <!-- ADD AD FORM -->
+        <div class="card" style="margin-bottom:20px">
+          <div style="font-weight:700;margin-bottom:18px;font-size:15px">إضافة إعلان جديد</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>عنوان الإعلان *</label>
+              <input type="text" class="form-control" id="ad-title" placeholder="مثال: عروض رمضان 🌙">
+            </div>
+            <div class="form-group">
+              <label>وصف (اختياري)</label>
+              <input type="text" class="form-control" id="ad-desc" placeholder="وصف مختصر للإعلان">
+            </div>
+          </div>
+
+          <!-- MEDIA UPLOAD -->
+          <div class="form-group">
+            <label><i class="fas fa-photo-video" style="color:var(--primary)"></i> الصورة أو الفيديو</label>
+            <div class="ad-upload-area" id="ad-upload-area">
+              <input type="file" accept="image/*,video/*" onchange="handleAdMedia(event)">
+              <i class="fas fa-cloud-upload-alt" style="font-size:2.5rem;color:var(--primary);margin-bottom:10px;display:block"></i>
+              <div style="font-weight:700;font-size:14px">اسحب ملفك هنا أو اضغط للاختيار</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px">صور: JPG, PNG, GIF • فيديو: MP4, MOV • حد أقصى 50MB</div>
+            </div>
+            <div class="ad-preview" id="ad-preview"></div>
+          </div>
+
+          <!-- OR URL -->
+          <div class="form-group">
+            <label>أو أدخل رابط مباشر</label>
+            <div style="display:flex;gap:8px">
+              <input type="text" class="form-control" id="ad-url" placeholder="https://... (رابط صورة أو فيديو)" style="flex:1">
+              <button class="btn btn-outline" onclick="previewAdUrl()"><i class="fas fa-eye"></i> معاينة</button>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="saveAd()">
+            <i class="fas fa-plus"></i> نشر الإعلان
+          </button>
+        </div>
+
+        <!-- ADS LIST -->
+        <div style="font-weight:700;margin-bottom:14px;font-size:15px">الإعلانات المنشورة</div>
+        <div class="ads-grid" id="ads-grid">
+          <div style="color:var(--text-muted);font-size:13px;text-align:center;padding:30px;grid-column:1/-1">جاري التحميل...</div>
+        </div>
+      </div>
+
+      <!-- SUPPORT -->
+      <div class="tab" id="tab-support">
+        <div class="page-header"><h2 class="page-title">الدعم الفني</h2><button class="btn btn-outline btn-sm" onclick="loadChats()"><i class="fas fa-sync"></i> تحديث</button></div>
+        <div class="chat-layout">
+          <div class="chat-sessions" id="chat-sessions"></div>
+          <div class="chat-main">
+            <div class="chat-main-header" id="chat-header">اختر محادثة من اليسار</div>
+            <div class="chat-msgs" id="chat-msgs"></div>
+            <div class="chat-reply">
+              <input type="text" id="reply-input" placeholder="اكتب ردك..." onkeypress="if(event.key==='Enter')sendReply()">
+              <button class="btn btn-primary btn-sm" onclick="sendReply()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMINS -->
+      <div class="tab" id="tab-admins">
+        <div class="page-header"><h2 class="page-title">إدارة المديرين</h2></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+          <div class="card">
+            <div style="font-weight:700;margin-bottom:16px">إضافة مدير جديد</div>
+            <div class="form-group"><label>اسم المستخدم</label><input type="text" class="form-control" id="na-user" placeholder="username"></div>
+            <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="na-pass" placeholder="password"></div>
+            <button class="btn btn-primary" onclick="addAdmin()"><i class="fas fa-user-plus"></i> إضافة</button>
+          </div>
+          <div class="table-wrap">
+            <table><thead><tr><th>المستخدم</th><th>إجراء</th></tr></thead><tbody id="admins-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end main-content -->
+  </div><!-- end admin-wrap -->
+
+  <footer style="background:var(--bg-card);border-top:1px solid var(--border);text-align:center;padding:18px;color:var(--text-muted);font-size:13px;margin-right:250px">
+    جميع الحقوق محفوظة © 2026 <span style="color:var(--primary);font-weight:700">TECHSTORE</span> - لؤي
+  </footer>
 </div>
 
-<div class="modal" id="order-modal">
-    <div class="modal-content">
-        <h3 id="m-order-name"></h3>
-        <div id="m-order-items" style="margin:15px 0;"></div>
-        <button class="btn" style="background:var(--primary); width:100%; color:#fff" onclick="closeModal()">إغلاق</button>
+<!-- ===== ORDER DETAIL MODAL ===== -->
+<div class="order-modal" id="order-detail-modal">
+  <div class="order-modal-box">
+    <div class="order-modal-header">
+      <h3 style="font-size:16px"><i class="fas fa-receipt" style="color:var(--primary)"></i> تفاصيل الطلب</h3>
+      <button style="background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer" onclick="closeOrderModal()"><i class="fas fa-times"></i></button>
     </div>
+    <div class="order-modal-body" id="order-modal-body"></div>
+  </div>
 </div>
 
 <script>
 const DB="https://store-c8993-default-rtdb.firebaseio.com";
-let allOrders={};
+async function fbGet(p){try{const r=await fetch(`${DB}/${p}.json`);return await r.json();}catch{return null;}}
+async function fbSet(p,d){try{await fetch(`${DB}/${p}.json`,{method:'PUT',body:JSON.stringify(d)});return true;}catch{return false;}}
+async function fbPush(p,d){try{const r=await fetch(`${DB}/${p}.json`,{method:'POST',body:JSON.stringify(d)});const j=await r.json();return j.name;}catch{return null;}}
+async function fbDelete(p){try{await fetch(`${DB}/${p}.json`,{method:'DELETE'});return true;}catch{return false;}}
 
-async function fbGet(p){const r=await fetch(`${DB}/${p}.json`);return await r.json();}
-
-async function loadOrders(){
-    const data = await fbGet('orders'); allOrders = data || {};
-    const tbody = document.getElementById('orders-tbody');
-    tbody.innerHTML = Object.entries(allOrders).reverse().map(([id, o])=>`
-        <tr>
-            <td>${o.name}</td>
-            <td>${o.phone}</td>
-            <td>${o.total} ج</td>
-            <td><button class="btn" style="background:var(--primary); color:#fff" onclick="viewOrder('${id}')">عرض الصور</button></td>
-        </tr>
-    `).join('');
+function toast(msg,type='info'){
+  const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  const t=document.createElement('div');t.className=`toast ${type}`;
+  t.innerHTML=`<span>${icons[type]}</span><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(-20px)';t.style.transition='all 0.4s';setTimeout(()=>t.remove(),400);},3500);
 }
 
-function viewOrder(id){
-    const o = allOrders[id];
-    document.getElementById('m-order-name').textContent = `طلب: ${o.name}`;
-    document.getElementById('m-order-items').innerHTML = o.items.map(it=>`
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
-            <img src="${it.img1}" style="width:50px; height:50px; object-fit:cover; border-radius:5px;">
-            <div><div>${it.name}</div><div style="font-size:12px; color:gray">السعر: ${it.price} ج</div></div>
+// LOGIN
+let adminUser='';
+function checkSession(){const s=localStorage.getItem('ts_admin');if(s){adminUser=s;showAdmin();return true;}return false;}
+
+async function doLogin(){
+  const user=document.getElementById('login-user').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  if(!user||!pass){toast('أدخل بياناتك','warning');return;}
+  if(user==='loay'&&pass==='11211'){successLogin(user);return;}
+  const admins=await fbGet('admins');
+  if(admins){const found=Object.values(admins).find(a=>a.user===user&&a.pass===pass);if(found){successLogin(user);return;}}
+  toast('بيانات خاطئة!','error');
+}
+
+function successLogin(user){
+  adminUser=user;localStorage.setItem('ts_admin',user);
+  document.getElementById('admin-name-display').textContent=user.toUpperCase();
+  showAdmin();
+}
+
+function showAdmin(){
+  document.getElementById('login-page').style.display='none';
+  document.getElementById('admin-page').style.display='block';
+  document.getElementById('menu-btn').style.display='flex';
+  loadDashboard();buildImgSlots();
+}
+
+function doLogout(){
+  localStorage.removeItem('ts_admin');
+  document.getElementById('admin-page').style.display='none';
+  document.getElementById('login-page').style.display='flex';
+  document.getElementById('menu-btn').style.display='none';
+}
+
+// TABS
+function showTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(`tab-${name}`).classList.add('active');
+  if(el) el.classList.add('active');
+  if(name==='products')loadProductsTable();
+  if(name==='orders')loadOrders();
+  if(name==='support')loadChats();
+  if(name==='admins')loadAdmins();
+  if(name==='dashboard')loadDashboard();
+  if(name==='coupons')loadCoupons();
+  if(name==='ads')loadAds();
+  closeSidebar();
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').style.display=document.getElementById('sidebar').classList.contains('open')?'block':'none';
+}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').style.display='none';}
+
+// DASHBOARD
+let allProducts={};
+async function loadDashboard(){
+  const [products,orders,chats,admins,coupons]=await Promise.all([fbGet('products'),fbGet('orders'),fbGet('chats'),fbGet('admins'),fbGet('coupons')]);
+  allProducts=products||{};
+  document.getElementById('s-products').textContent=Object.keys(allProducts).length;
+  document.getElementById('s-orders').textContent=orders?Object.keys(orders).length:0;
+  document.getElementById('s-chats').textContent=chats?Object.keys(chats).length:0;
+  document.getElementById('s-coupons').textContent=coupons?Object.keys(coupons).length:0;
+  document.getElementById('s-admins').textContent=(admins?Object.keys(admins).length:0)+1;
+  if(orders){
+    const recent=Object.entries(orders).slice(-5).reverse();
+    document.getElementById('recent-orders').innerHTML=recent.map(([id,o])=>`
+      <div style="padding:10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="openOrderModal('${id}',${JSON.stringify(o).replace(/'/g,"&#39;")})">
+        <div><strong>${o.name}</strong><div style="font-size:12px;color:var(--text-muted)">${o.phone}</div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="color:var(--primary);font-weight:700">${o.total?.toLocaleString()||0} ج</div>
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();openOrderModal('${id}',${JSON.stringify(o).replace(/'/g,"&#39;")})"><i class="fas fa-eye"></i></button>
         </div>
-    `).join('');
-    document.getElementById('order-modal').classList.add('open');
+      </div>`).join('');
+  }
 }
 
-async function addCoupon(){
-    const name = document.getElementById('cp-name').value.trim().toUpperCase();
-    const val = document.getElementById('cp-val').value;
-    if(!name || !val) return alert('أكمل البيانات');
-    await fetch(`${DB}/coupons/${name}.json`, {method:'PUT', body:JSON.stringify({value: parseFloat(val)})});
-    alert('تمت الإضافة'); loadCoupons();
+// PRODUCTS TABLE
+async function loadProductsTable(){
+  const data=await fbGet('products');allProducts=data||{};
+  const tbody=document.getElementById('products-tbody');
+  const entries=Object.entries(allProducts);
+  if(!entries.length){tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">لا توجد منتجات بعد</td></tr>`;return;}
+  tbody.innerHTML=entries.map(([id,p])=>`
+    <tr>
+      <td>${p.img1?`<img src="${p.img1}" style="width:50px;height:50px;object-fit:cover;border-radius:8px">`:'📦'}</td>
+      <td><strong>${p.name}</strong></td>
+      <td><span class="badge badge-success">${p.cat}</span></td>
+      <td style="color:var(--primary);font-weight:700">${Number(p.price).toLocaleString()} ج</td>
+      <td>${p.orders||0}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="editProduct('${id}')"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProduct('${id}','${p.name.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+// IMAGE SLOTS
+const MAX_IMGS=8;
+let imgData=new Array(MAX_IMGS).fill(null);
+
+function buildImgSlots(){
+  const grid=document.getElementById('img-slots');
+  if(!grid)return;
+  grid.innerHTML='';
+  for(let i=0;i<MAX_IMGS;i++){
+    const slot=document.createElement('div');
+    slot.className='img-upload-slot'+(imgData[i]?' has-img':'');
+    slot.id=`slot-${i}`;
+    if(imgData[i]){
+      slot.innerHTML=`<img src="${imgData[i]}" alt=""><div class="remove-img" onclick="removeImg(${i})">✕</div>`;
+    }else{
+      slot.innerHTML=`<div class="slot-num">${i+1}</div><i class="fas fa-camera" style="font-size:18px"></i><span>${i===0?'الرئيسية':'صورة '+(i+1)}</span><input type="file" accept="image/*" capture="environment" onchange="handleImgUpload(event,${i})">`;
+      const urlBtn=document.createElement('div');
+      urlBtn.style.cssText='position:absolute;bottom:4px;font-size:10px;color:var(--accent);z-index:3;text-decoration:underline;cursor:pointer';
+      urlBtn.textContent='رابط URL';
+      urlBtn.onclick=(e)=>{e.stopPropagation();promptUrl(i);};
+      slot.appendChild(urlBtn);
+    }
+    grid.appendChild(slot);
+  }
+}
+
+function promptUrl(i){const url=prompt(`رابط الصورة ${i+1}:`);if(url&&url.startsWith('http')){imgData[i]=url;buildImgSlots();}}
+function removeImg(i){imgData[i]=null;buildImgSlots();}
+
+async function handleImgUpload(e,idx){
+  const file=e.target.files[0];if(!file)return;
+  if(file.size>5*1024*1024){toast('الصورة أكبر من 5MB','warning');return;}
+  document.getElementById('upload-progress').style.display='block';
+  document.getElementById('upload-status').textContent=`جاري رفع الصورة ${idx+1}...`;
+  document.getElementById('progress-fill').style.width='40%';
+  try{
+    const base64=await fileToBase64(file);
+    document.getElementById('progress-fill').style.width='100%';
+    document.getElementById('upload-status').textContent='تم الرفع ✅';
+    imgData[idx]=base64;
+    setTimeout(()=>{document.getElementById('upload-progress').style.display='none';document.getElementById('progress-fill').style.width='0';},1500);
+    buildImgSlots();toast(`تم رفع الصورة ${idx+1}`,'success');
+  }catch{toast('فشل رفع الصورة','error');document.getElementById('upload-progress').style.display='none';}
+}
+
+function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file);});}
+
+// SAVE PRODUCT
+async function saveProduct(){
+  const name=document.getElementById('p-name').value.trim();
+  const price=document.getElementById('p-price').value;
+  if(!name||!price){toast('اسم المنتج والسعر مطلوبان','warning');return;}
+  const editId=document.getElementById('edit-id').value;
+  toast('جاري الحفظ...','info');
+  const data={name,cat:document.getElementById('p-cat').value,price:Number(price),
+    oldPrice:Number(document.getElementById('p-old-price').value)||null,
+    desc:document.getElementById('p-desc').value,
+    img1:imgData[0]||null,img2:imgData[1]||null,img3:imgData[2]||null,img4:imgData[3]||null,
+    img5:imgData[4]||null,img6:imgData[5]||null,img7:imgData[6]||null,img8:imgData[7]||null,
+    orders:allProducts[editId]?.orders||0,updatedAt:Date.now()};
+  if(!editId)data.createdAt=Date.now();
+  if(editId){await fbSet(`products/${editId}`,data);toast('تم تعديل المنتج ✅','success');}
+  else{await fbPush('products',data);toast('تم إضافة المنتج ✅','success');}
+  resetForm();showTab('products');await loadProductsTable();
+}
+
+function resetForm(){
+  document.getElementById('edit-id').value='';
+  document.getElementById('p-name').value='';
+  document.getElementById('p-cat').value='موبايلات';
+  document.getElementById('p-price').value='';
+  document.getElementById('p-old-price').value='';
+  document.getElementById('p-desc').value='';
+  document.getElementById('form-title').textContent='إضافة منتج جديد';
+  imgData=new Array(MAX_IMGS).fill(null);buildImgSlots();
+}
+
+function editProduct(id){
+  const p=allProducts[id];if(!p)return;
+  document.getElementById('edit-id').value=id;
+  document.getElementById('p-name').value=p.name||'';
+  document.getElementById('p-cat').value=p.cat||'موبايلات';
+  document.getElementById('p-price').value=p.price||'';
+  document.getElementById('p-old-price').value=p.oldPrice||'';
+  document.getElementById('p-desc').value=p.desc||'';
+  document.getElementById('form-title').textContent='تعديل: '+p.name;
+  imgData=[p.img1,p.img2,p.img3,p.img4,p.img5,p.img6,p.img7,p.img8].map(v=>v||null);
+  showTab('add-product');buildImgSlots();
+}
+
+async function deleteProduct(id,name){
+  if(!confirm(`حذف "${name}"؟`))return;
+  await fbDelete(`products/${id}`);
+  toast('تم الحذف','success');loadProductsTable();
+}
+
+// ===== ORDERS =====
+let allOrders={};
+async function loadOrders(){
+  const data=await fbGet('orders');
+  allOrders=data||{};
+  const tbody=document.getElementById('orders-tbody');
+  const entries=Object.entries(allOrders).reverse();
+  if(!entries.length){tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted)">لا توجد طلبات</td></tr>`;return;}
+  tbody.innerHTML=entries.map(([id,o],i)=>`
+    <tr>
+      <td style="color:var(--text-muted)">#${entries.length-i}</td>
+      <td><strong>${o.name}</strong></td>
+      <td><a href="tel:${o.phone}" style="color:var(--accent)">${o.phone}</a></td>
+      <td style="color:var(--primary);font-weight:700">${(o.total||0).toLocaleString()} ج</td>
+      <td>${o.coupon?`<span class="badge badge-success">🏷️ ${o.coupon}</span>`:'<span style="color:var(--text-muted)">-</span>'}</td>
+      <td style="color:var(--text-muted);font-size:12px">${new Date(o.time||Date.now()).toLocaleDateString('ar-EG')}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="openOrderModal('${id}',orders_cache['${id}'])"><i class="fas fa-eye"></i> تفاصيل</button></td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteOrder('${id}')"><i class="fas fa-trash"></i></button></td>
+    </tr>`).join('');
+  window.orders_cache=allOrders;
+}
+
+function openOrderModal(id,order){
+  if(typeof order==='string') order=allOrders[id]||JSON.parse(order);
+  if(!order) return;
+  const itemsDetail=order.itemsDetail||[];
+  document.getElementById('order-modal-body').innerHTML=`
+    <div class="order-info-grid">
+      <div class="order-info-item">
+        <div class="order-info-label">👤 اسم العميل</div>
+        <div class="order-info-value">${order.name||'-'}</div>
+      </div>
+      <div class="order-info-item">
+        <div class="order-info-label">📱 رقم الموبايل</div>
+        <div class="order-info-value"><a href="tel:${order.phone}" style="color:var(--accent)">${order.phone||'-'}</a></div>
+      </div>
+      <div class="order-info-item" style="grid-column:1/-1">
+        <div class="order-info-label">📍 العنوان</div>
+        <div class="order-info-value">${order.address||'-'}</div>
+      </div>
+      <div class="order-info-item">
+        <div class="order-info-label">💰 المبلغ الأصلي</div>
+        <div class="order-info-value">${(order.rawTotal||order.total||0).toLocaleString()} جنيه</div>
+      </div>
+      <div class="order-info-item">
+        <div class="order-info-label">🎁 الخصم</div>
+        <div class="order-info-value" style="color:var(--success)">${order.discount?'-'+order.discount.toLocaleString()+' ج ('+order.coupon+')':'لا يوجد'}</div>
+      </div>
+      <div class="order-info-item" style="background:rgba(0,87,255,0.1);border-color:var(--primary)">
+        <div class="order-info-label">💳 الإجمالي النهائي</div>
+        <div class="order-info-value" style="color:var(--primary);font-size:1.2rem">${(order.total||0).toLocaleString()} جنيه</div>
+      </div>
+      <div class="order-info-item">
+        <div class="order-info-label">⏰ التاريخ</div>
+        <div class="order-info-value">${new Date(order.time||Date.now()).toLocaleString('ar-EG')}</div>
+      </div>
+    </div>
+    <div class="order-products-title">
+      <i class="fas fa-shopping-bag" style="color:var(--primary)"></i>
+      المنتجات المطلوبة (${itemsDetail.length||order.items?.split('،').length||0} منتج)
+    </div>
+    ${itemsDetail.length ? itemsDetail.map(item=>`
+      <div class="order-product-item">
+        ${item.img?`<img class="order-product-img" src="${item.img}" alt="">`:`<div class="order-product-img">📦</div>`}
+        <div class="order-product-info">
+          <div class="order-product-name">${item.name}</div>
+          <div class="order-product-qty"><i class="fas fa-times" style="font-size:11px"></i> ${item.qty} قطعة</div>
+          <div class="order-product-price">${((item.price||0)*item.qty).toLocaleString()} جنيه</div>
+        </div>
+        <div style="text-align:left;flex-shrink:0">
+          <div style="font-size:12px;color:var(--text-muted)">سعر الوحدة</div>
+          <div style="font-weight:700;color:var(--text-muted);font-size:13px">${(item.price||0).toLocaleString()} ج</div>
+        </div>
+      </div>`).join('')
+    : `<div style="background:var(--bg-card2);border-radius:12px;padding:16px;color:var(--text-muted);font-size:13px">${order.items||'لا توجد تفاصيل'}</div>`}
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <a href="https://wa.me/${order.phone?.replace(/[^0-9]/g,'')}" target="_blank" class="btn btn-success">
+        <i class="fab fa-whatsapp"></i> تواصل واتساب
+      </a>
+      <a href="tel:${order.phone}" class="btn btn-outline">
+        <i class="fas fa-phone"></i> اتصال
+      </a>
+    </div>`;
+  document.getElementById('order-detail-modal').classList.add('open');
+}
+
+function closeOrderModal(){document.getElementById('order-detail-modal').classList.remove('open');}
+document.getElementById('order-detail-modal').addEventListener('click',function(e){if(e.target===this)closeOrderModal();});
+
+async function deleteOrder(id){
+  if(!confirm('حذف هذا الطلب؟'))return;
+  await fbDelete(`orders/${id}`);toast('تم حذف الطلب','success');loadOrders();
+}
+
+// ===== COUPONS =====
+let couponType='percent';
+function setCouponType(t){
+  couponType=t;
+  document.getElementById('type-percent').classList.toggle('active',t==='percent');
+  document.getElementById('type-fixed').classList.toggle('active',t==='fixed');
+  document.getElementById('c-val-label').textContent=t==='percent'?'قيمة الخصم (%) *':'قيمة الخصم (جنيه) *';
+}
+
+async function saveCoupon(){
+  const code=document.getElementById('c-code').value.trim().toUpperCase();
+  const value=parseFloat(document.getElementById('c-value').value);
+  if(!code||!value){toast('الكود والقيمة مطلوبان','warning');return;}
+  if(couponType==='percent'&&(value<=0||value>100)){toast('النسبة يجب أن تكون بين 1 و100','warning');return;}
+  const active=document.getElementById('c-active').value==='1';
+  await fbPush('coupons',{code,type:couponType,value,active,createdAt:Date.now()});
+  toast(`تم إضافة كود "${code}" ✅`,'success');
+  document.getElementById('c-code').value='';
+  document.getElementById('c-value').value='';
+  loadCoupons();
 }
 
 async function loadCoupons(){
-    const data = await fbGet('coupons');
-    document.getElementById('coupons-list').innerHTML = data ? Object.entries(data).map(([n, v])=>`
-        <div class="card" style="display:flex; justify-content:space-between">
-            <span>${n} (${v.value * 100}%)</span>
-            <button onclick="deleteCoupon('${n}')" style="color:red; background:none; border:none; cursor:pointer">حذف</button>
-        </div>`).join('') : 'لا توجد أكواد';
+  const data=await fbGet('coupons');
+  const container=document.getElementById('coupons-list');
+  if(!data||!Object.keys(data).length){container.innerHTML=`<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:30px">لا توجد أكواد بعد</div>`;return;}
+  container.innerHTML=Object.entries(data).map(([id,c])=>`
+    <div class="coupon-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="coupon-code">${c.code}</div>
+          <div class="coupon-value">${c.type==='percent'?c.value+'%':c.value.toLocaleString()+' ج'} خصم</div>
+          <div class="coupon-meta">${c.type==='percent'?'نسبة مئوية':'مبلغ ثابت'}</div>
+        </div>
+        <span class="badge ${c.active?'badge-success':'badge-danger'}">${c.active?'✅ مفعّل':'❌ معطّل'}</span>
+      </div>
+      <div class="coupon-actions">
+        <button class="btn btn-sm ${c.active?'btn-warning':'btn-success'}" onclick="toggleCoupon('${id}',${!c.active})">
+          <i class="fas ${c.active?'fa-pause':'fa-play'}"></i> ${c.active?'تعطيل':'تفعيل'}
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCoupon('${id}','${c.code}')">
+          <i class="fas fa-trash"></i> حذف
+        </button>
+      </div>
+    </div>`).join('');
 }
 
-async function deleteCoupon(n){ if(confirm('حذف؟')) { await fetch(`${DB}/coupons/${n}.json`, {method:'DELETE'}); loadCoupons(); } }
-
-function showTab(t){
-    document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
-    document.getElementById(`tab-${t}`).style.display='block';
-    if(t==='orders') loadOrders();
-    if(t==='coupons') loadCoupons();
+async function toggleCoupon(id,active){
+  const data=await fbGet(`coupons/${id}`);if(!data)return;
+  data.active=active;
+  await fbSet(`coupons/${id}`,data);
+  toast(active?'تم تفعيل الكود ✅':'تم تعطيل الكود','info');
+  loadCoupons();
 }
 
-function closeModal(){ document.getElementById('order-modal').classList.remove('open'); }
+async function deleteCoupon(id,code){
+  if(!confirm(`حذف كود "${code}"؟`))return;
+  await fbDelete(`coupons/${id}`);toast('تم حذف الكود','success');loadCoupons();
+}
 
-window.onload = () => loadOrders();
+// ===== ADS =====
+let adMediaData=null;
+let adMediaType=null;
+
+function handleAdMedia(e){
+  const file=e.target.files[0];if(!file)return;
+  if(file.size>50*1024*1024){toast('حجم الملف أكبر من 50MB','warning');return;}
+  adMediaType=file.type.startsWith('video')?'video':'image';
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    adMediaData=ev.target.result;
+    const preview=document.getElementById('ad-preview');
+    preview.style.display='block';
+    if(adMediaType==='video'){
+      preview.innerHTML=`<video src="${adMediaData}" controls style="max-width:100%;border-radius:10px;max-height:200px"></video><div style="font-size:12px;color:var(--success);margin-top:6px">✅ فيديو جاهز للرفع</div>`;
+    }else{
+      preview.innerHTML=`<img src="${adMediaData}" style="max-width:100%;border-radius:10px;max-height:200px;object-fit:cover"><div style="font-size:12px;color:var(--success);margin-top:6px">✅ صورة جاهزة للرفع</div>`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function previewAdUrl(){
+  const url=document.getElementById('ad-url').value.trim();
+  if(!url){toast('أدخل الرابط أولاً','warning');return;}
+  const preview=document.getElementById('ad-preview');
+  preview.style.display='block';
+  const isVideo=url.match(/\.(mp4|mov|webm|avi)/i);
+  adMediaData=url;
+  adMediaType=isVideo?'video':'image';
+  if(isVideo){
+    preview.innerHTML=`<video src="${url}" controls style="max-width:100%;border-radius:10px;max-height:200px"></video>`;
+  }else{
+    preview.innerHTML=`<img src="${url}" style="max-width:100%;border-radius:10px;max-height:200px;object-fit:cover" onerror="this.src='';this.alt='فشل تحميل الصورة'">`;
+  }
+}
+
+async function saveAd(){
+  const title=document.getElementById('ad-title').value.trim();
+  if(!title){toast('عنوان الإعلان مطلوب','warning');return;}
+  const urlInput=document.getElementById('ad-url').value.trim();
+  const media=adMediaData||urlInput;
+  if(!media){toast('برجاء رفع صورة/فيديو أو إدخال رابط','warning');return;}
+  toast('جاري حفظ الإعلان...','info');
+  const ad={title,desc:document.getElementById('ad-desc').value.trim(),media,mediaType:adMediaType||'image',active:true,createdAt:Date.now()};
+  await fbPush('ads',ad);
+  toast('تم نشر الإعلان ✅','success');
+  document.getElementById('ad-title').value='';
+  document.getElementById('ad-desc').value='';
+  document.getElementById('ad-url').value='';
+  document.getElementById('ad-preview').style.display='none';
+  adMediaData=null;adMediaType=null;
+  loadAds();
+}
+
+async function loadAds(){
+  const data=await fbGet('ads');
+  const grid=document.getElementById('ads-grid');
+  if(!data||!Object.keys(data).length){
+    grid.innerHTML=`<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:40px;grid-column:1/-1"><i class="fas fa-photo-video" style="font-size:2.5rem;display:block;margin-bottom:12px;opacity:0.3"></i>لا توجد إعلانات بعد</div>`;return;
+  }
+  grid.innerHTML=Object.entries(data).reverse().map(([id,ad])=>`
+    <div class="ad-card">
+      <div class="ad-media-wrap">
+        ${ad.mediaType==='video'
+          ?`<video src="${ad.media}" controls muted style="width:100%;height:100%;object-fit:cover"></video>`
+          :`<img src="${ad.media}" alt="${ad.title}" onerror="this.style.opacity='0.2'">`}
+        <div class="ad-media-type">
+          <i class="fas ${ad.mediaType==='video'?'fa-play-circle':'fa-image'}"></i>
+          ${ad.mediaType==='video'?'فيديو':'صورة'}
+        </div>
+      </div>
+      <div class="ad-info">
+        <div class="ad-title">${ad.title}</div>
+        ${ad.desc?`<div style="font-size:12px;color:var(--text-muted);margin-top:3px">${ad.desc}</div>`:''}
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px">${new Date(ad.createdAt||Date.now()).toLocaleDateString('ar-EG')}</div>
+        <div class="ad-actions">
+          <button class="btn btn-sm ${ad.active?'btn-warning':'btn-success'}" onclick="toggleAd('${id}',${!ad.active})">
+            <i class="fas ${ad.active?'fa-eye-slash':'fa-eye'}"></i> ${ad.active?'إخفاء':'إظهار'}
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAd('${id}')">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function toggleAd(id,active){
+  const d=await fbGet(`ads/${id}`);if(!d)return;
+  d.active=active;await fbSet(`ads/${id}`,d);
+  toast(active?'تم إظهار الإعلان':'تم إخفاء الإعلان','info');loadAds();
+}
+
+async function deleteAd(id){
+  if(!confirm('حذف هذا الإعلان؟'))return;
+  await fbDelete(`ads/${id}`);toast('تم حذف الإعلان','success');loadAds();
+}
+
+// SUPPORT CHAT
+let currentChatSession=null;
+async function loadChats(){
+  const data=await fbGet('chats');
+  const container=document.getElementById('chat-sessions');
+  if(!data||!Object.keys(data).length){container.innerHTML=`<div style="padding:20px;color:var(--text-muted);font-size:13px;text-align:center">لا توجد محادثات</div>`;return;}
+  container.innerHTML=Object.entries(data).map(([sid,s])=>`
+    <div class="chat-session-item ${sid===currentChatSession?'active':''}" onclick="openChatSession('${sid}')">
+      <div style="font-weight:700;font-size:13px">${sid.substring(0,12)}...</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.info?.lastMsg||''}</div>
+    </div>`).join('');
+}
+
+async function openChatSession(sid){
+  currentChatSession=sid;
+  document.getElementById('chat-header').textContent='المحادثة: '+sid.substring(0,16)+'...';
+  const data=await fbGet(`chats/${sid}/messages`);
+  const msgs=data?Object.values(data):[];
+  const container=document.getElementById('chat-msgs');
+  container.innerHTML=msgs.map(m=>`<div class="chat-msg from-${m.from}">${m.text}</div>`).join('');
+  container.scrollTop=container.scrollHeight;
+  document.querySelectorAll('.chat-session-item').forEach((el,i)=>el.classList.toggle('active',Object.keys(await fbGet('chats')||{})[i]===sid));
+}
+
+async function sendReply(){
+  if(!currentChatSession){toast('اختر محادثة أولاً','warning');return;}
+  const input=document.getElementById('reply-input');
+  const text=input.value.trim();if(!text)return;
+  input.value='';
+  await fbPush(`chats/${currentChatSession}/messages`,{text,from:'admin',time:Date.now()});
+  openChatSession(currentChatSession);
+}
+
+// ADMINS
+async function loadAdmins(){
+  const data=await fbGet('admins');
+  const tbody=document.getElementById('admins-tbody');
+  if(!data){tbody.innerHTML=`<tr><td colspan="2" style="text-align:center;color:var(--text-muted);padding:20px">لا يوجد مديرون إضافيون</td></tr>`;return;}
+  tbody.innerHTML=Object.entries(data).map(([id,a])=>`
+    <tr>
+      <td><strong>${a.user}</strong></td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteAdmin('${id}','${a.user}')"><i class="fas fa-trash"></i></button></td>
+    </tr>`).join('');
+}
+
+async function addAdmin(){
+  const user=document.getElementById('na-user').value.trim();
+  const pass=document.getElementById('na-pass').value;
+  if(!user||!pass){toast('أدخل الاسم وكلمة المرور','warning');return;}
+  if(user==='loay'){toast('هذا الاسم محجوز','error');return;}
+  await fbPush('admins',{user,pass});
+  document.getElementById('na-user').value='';document.getElementById('na-pass').value='';
+  toast(`تم إضافة "${user}" ✅`,'success');loadAdmins();
+}
+
+async function deleteAdmin(id,name){
+  if(!confirm(`حذف "${name}"؟`))return;
+  await fbDelete(`admins/${id}`);toast('تم حذف المدير','success');loadAdmins();
+}
+
+// INIT
+checkSession();
 </script>
 </body>
 </html>
