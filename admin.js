@@ -1,45 +1,53 @@
-// مصفوفة المنتجات (بنجيبها من التخزين لو موجودة أو بنبدأ بـ فاضي)
+// قراءة المنتجات من التخزين المحلي
 let products = JSON.parse(localStorage.getItem('techstore_products')) || [];
 
+// تحديث إحصائيات لوحة التحكم عند فتح الصفحة
+function updateAdminStats() {
+    const totalProductsCount = document.getElementById('totalProductsCount');
+    if (totalProductsCount) {
+        totalProductsCount.innerText = products.length; // بيعرض عدد المنتجات الحقيقي
+    }
+}
+
+// التعامل مع فورم إضافة المنتج
 const productForm = document.getElementById('productForm');
 
 if (productForm) {
     productForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // تجميع بيانات المنتج الجديد
+        // تجميع بيانات المنتج من الفورم
         const newProduct = {
-            id: Date.now(), // رقم تعريفي فريد بناءً على الوقت
+            id: Date.now(),
             name: document.getElementById('pName').value,
             price: parseFloat(document.getElementById('pPrice').value),
             icon: document.getElementById('pIcon').value,
-            tag: document.getElementById('pTag').value,
-            date: new Date().toLocaleDateString('ar-EG')
+            tag: document.getElementById('pTag').value
         };
 
-        // إضافة المنتج للمصفوفة
+        // إضافة المنتج وحفظه
         products.push(newProduct);
-
-        // حفظ المصفوفة في التخزين
         localStorage.setItem('techstore_products', JSON.stringify(products));
 
-        // تصفير الفورم بعد الإضافة
+        // مسح الخانات وتحديث الرقم
         productForm.reset();
-
-        alert('تم إضافة المنتج بنجاح! افتح صفحة المتجر دلوقتي وشوف العظمة.');
-        
-        // تحديث جدول الإحصائيات لو موجود (اختياري)
         updateAdminStats();
+
+        // رسالة تأكيد
+        alert('تم إضافة المنتج للمتجر بنجاح!');
     });
 }
 
-// وظيفة لتحديث أرقام لوحة التحكم بناءً على الداتا الحقيقية
-function updateAdminStats() {
-    const productCountElement = document.querySelector('.stat-card .value');
-    if (productCountElement) {
-        productCountElement.innerText = products.length;
-    }
+// التعامل مع زرار تسجيل الخروج
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', function() {
+        // مسح حالة تسجيل الدخول
+        localStorage.removeItem('techstore_admin_logged_in');
+        // تحويل لصفحة اللوجين
+        window.location.href = "admin-login.html";
+    });
 }
 
-// تشغيل التحديث فور فتح الصفحة
+// تشغيل التحديث فوراً
 window.onload = updateAdminStats;
