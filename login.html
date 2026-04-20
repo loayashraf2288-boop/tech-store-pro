@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>دخول الإدارة — TechStore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#04080f;--bg2:#080e1c;--blue:#1565ff;--text:#e2f0ff;--border:rgba(21,101,255,0.18);}
+        body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}
+        .login-card{background:var(--bg2);padding:40px;border-radius:20px;border:1px solid var(--border);width:100%;max-width:380px;text-align:center;}
+        input{width:100%;padding:12px;margin:10px 0;background:#101d36;border:1px solid var(--border);color:white;border-radius:10px;font-family:inherit;}
+        button{width:100%;padding:12px;background:var(--blue);border:none;color:white;border-radius:10px;cursor:pointer;font-weight:700;margin-top:10px;}
+        .error{color:#ff4466;font-size:13px;margin-top:10px;display:none;}
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2 style="margin-bottom:20px;">دخول الأدمن 🔐</h2>
+        <input type="text" id="user" placeholder="اسم المستخدم">
+        <input type="password" id="pass" placeholder="كلمة المرور">
+        <div id="err" class="error">خطأ في البيانات!</div>
+        <button onclick="login()">دخول النظام</button>
+    </div>
+
+    <script>
+        function login() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            
+            // بيانات الدخول الافتراضية (يمكنك تغييرها)
+            if(u === 'admin' && p === 'admin123') {
+                sessionStorage.setItem('ts_admin', 'active');
+                location.href = 'dashboard.html';
+            } else {
+                document.getElementById('err').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
