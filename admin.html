@@ -3,71 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TECHSTORE - Admin Panel</title>
+<title>TECHSTORE - لوحة التحكم</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
-:root{--primary:#0057FF;--bg:#050A14;--card:#0D1626;--text:#E8F0FF;}
-body{font-family:'Cairo';background:var(--bg);color:var(--text);margin:0;display:flex;}
-.sidebar{width:240px;background:var(--card);height:100vh;padding:20px;border-left:1px solid rgba(0,87,255,0.2);position:fixed;right:0;}
-.main{margin-right:240px;padding:30px;width:100%;}
-.btn{background:var(--primary);color:#fff;border:none;padding:12px 25px;border-radius:10px;cursor:pointer;font-weight:900;}
-.input{width:100%;padding:12px;margin-bottom:15px;background:var(--bg);border:1px solid #222;border-radius:10px;color:#fff;}
+:root{--primary:#0057FF;--bg-dark:#050A14;--bg-card:#0D1626;--text:#E8F0FF;--border:rgba(0,87,255,0.2);}
+body{font-family:'Cairo';background:var(--bg-dark);color:var(--text);margin:0;display:flex;}
+.sidebar{width:250px;background:var(--bg-card);height:100vh;border-left:1px solid var(--border);padding:20px;position:fixed;right:0;}
+.main{margin-right:250px;padding:30px;flex:1;}
+.nav-item{padding:15px;cursor:pointer;border-radius:10px;margin-bottom:5px;transition:0.3s;display:flex;align-items:center;gap:10px;}
+.nav-item:hover, .nav-item.active{background:var(--primary);color:#fff;}
+.card{background:var(--bg-card);padding:25px;border-radius:20px;border:1px solid var(--border);margin-bottom:20px;}
+.input{width:100%;padding:12px;background:var(--bg-dark);border:1px solid var(--border);border-radius:10px;color:#fff;margin-bottom:15px;outline:none;}
+.btn{padding:12px 25px;border-radius:10px;border:none;cursor:pointer;font-weight:700;background:var(--primary);color:#fff;width:100%;}
 .img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
-.slot{aspect-ratio:1;border:2px dashed #333;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;}
-.slot img{width:100%;height:100%;object-fit:cover;}
-#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--primary);padding:10px 30px;border-radius:10px;display:none;z-index:9999;}
+.img-slot{aspect-ratio:1;border:2px dashed var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;background:var(--bg-dark);}
+.img-slot img{width:100%;height:100%;object-fit:cover;position:absolute;}
+#toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;}
+.toast{background:var(--bg-card);border:1px solid var(--primary);padding:12px 25px;border-radius:10px;color:#fff;box-shadow:0 0 20px var(--primary);}
 </style>
 </head>
 <body>
 
-<div id="toast"></div>
+<div id="toast-container"></div>
 
 <div class="sidebar">
-  <h2 style="color:var(--primary)">TECHSTORE</h2>
-  <div onclick="show('add')" style="padding:15px;cursor:pointer">➕ إضافة منتج</div>
-  <div onclick="show('ads')" style="padding:15px;cursor:pointer">🖼️ الإعلانات</div>
-  <div onclick="show('orders')" style="padding:15px;cursor:pointer">📦 الطلبات</div>
+  <h2 style="color:var(--primary);text-align:center;margin-bottom:30px">TECHSTORE</h2>
+  <div class="nav-item active" onclick="showTab('add')"><i class="fas fa-plus"></i> إضافة منتج</div>
+  <div class="nav-item" onclick="showTab('ads')"><i class="fas fa-ad"></i> السلايدر (الإعلانات)</div>
+  <div class="nav-item" onclick="location.reload()" style="color:red;margin-top:50px"><i class="fas fa-sign-out-alt"></i> خروج</div>
 </div>
 
 <div class="main">
   <div id="tab-add">
-    <h2>إضافة منتج جديد</h2>
-    <div style="background:var(--card);padding:25px;border-radius:20px">
+    <h2>إضافة منتج بـ 8 صور</h2>
+    <div class="card">
       <input type="text" id="p-name" class="input" placeholder="اسم المنتج">
       <input type="number" id="p-price" class="input" placeholder="السعر">
-      <textarea id="p-desc" class="input" placeholder="الوصف" rows="3"></textarea>
+      <textarea id="p-desc" class="input" placeholder="وصف المنتج..." rows="3"></textarea>
+      <div style="margin-bottom:10px;font-size:13px;color:var(--primary)">ارفع حتى 8 صور:</div>
       <div class="img-grid" id="slots"></div>
-      <button class="btn" style="width:100%;margin-top:20px" onclick="save()">حفظ المنتج</button>
+      <button class="btn" style="margin-top:20px" onclick="save()">حفظ المنتج</button>
     </div>
   </div>
 
   <div id="tab-ads" style="display:none">
     <h2>إدارة السلايدر</h2>
-    <input type="file" id="ad-file" class="input" onchange="uploadAd(this)">
+    <div class="card">
+      <label>ارفع صورة للإعلان:</label>
+      <input type="file" id="ad-input" class="input" onchange="uploadAd(this)">
+      <div id="ads-list" class="img-grid" style="margin-top:20px"></div>
+    </div>
   </div>
 </div>
 
 <script>
 const DB="https://store-c8993-default-rtdb.firebaseio.com";
-let imgs = new Array(8).fill(null);
+let imgData = new Array(8).fill(null);
 
-function toast(m){
-  const t = document.getElementById('toast');
-  t.textContent = m; t.style.display='block';
-  setTimeout(()=>t.style.display='none', 3000);
+function toast(msg){
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+  c.appendChild(t); setTimeout(()=>t.remove(), 3000);
 }
 
 function build(){
   const g = document.getElementById('slots'); g.innerHTML='';
   for(let i=0; i<8; i++){
-    const s = document.createElement('div'); s.className='slot';
-    s.innerHTML = imgs[i] ? `<img src="${imgs[i]}">` : '+';
+    const s = document.createElement('div'); s.className='img-slot';
+    s.innerHTML = imgData[i] ? `<img src="${imgData[i]}">` : `<span>+</span>`;
     s.onclick = () => {
       const inp = document.createElement('input'); inp.type='file';
       inp.onchange = e => {
-        const r = new FileReader();
-        r.onload = ev => { imgs[i] = ev.target.result; build(); };
-        r.readAsDataURL(e.target.files[0]);
+        const reader = new FileReader();
+        reader.onload = ev => { imgData[i] = ev.target.result; build(); };
+        reader.readAsDataURL(e.target.files[0]);
       };
       inp.click();
     };
@@ -76,28 +86,29 @@ function build(){
 }
 
 async function save(){
+  const name = document.getElementById('p-name').value;
+  const price = document.getElementById('p-price').value;
+  if(!name || !price) return toast("أدخل البيانات كاملة!");
   const data = {
-    name: document.getElementById('p-name').value,
-    price: document.getElementById('p-price').value,
-    desc: document.getElementById('p-desc').value,
-    img1: imgs[0], img2: imgs[1], img3: imgs[2], img4: imgs[3],
-    img5: imgs[4], img6: imgs[5], img7: imgs[6], img8: imgs[7]
+    name, price, desc: document.getElementById('p-desc').value,
+    img1: imgData[0], img2: imgData[1], img3: imgData[2], img4: imgData[3],
+    img5: imgData[4], img6: imgData[5], img7: imgData[6], img8: imgData[7]
   };
   await fetch(`${DB}/products.json`, {method:'POST', body:JSON.stringify(data)});
-  toast("تم الحفظ بنجاح! 🚀");
+  toast("تم حفظ المنتج بنجاح! ✅");
   location.reload();
 }
 
 async function uploadAd(inp){
-  const r = new FileReader();
-  r.onload = async e => {
+  const reader = new FileReader();
+  reader.onload = async e => {
     await fetch(`${DB}/ads.json`, {method:'POST', body:JSON.stringify({img: e.target.result})});
-    toast("تم إضافة الإعلان! ✅");
+    toast("تمت إضافة الإعلان بنجاح! ✅");
   };
-  r.readAsDataURL(inp.files[0]);
+  reader.readAsDataURL(inp.files[0]);
 }
 
-function show(t){
+function showTab(t){
   document.getElementById('tab-add').style.display = t==='add'?'block':'none';
   document.getElementById('tab-ads').style.display = t==='ads'?'block':'none';
 }
