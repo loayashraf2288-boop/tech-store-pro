@@ -1,98 +1,73 @@
-// --- تهيئة البيانات الأساسية ---
-let products = JSON.parse(localStorage.getItem('techstore_products')) || [];
+// لينك الداتا بيس بتاعتك (Firebase Realtime Database)
+const FIREBASE_URL = "https://store-c8993-default-rtdb.firebaseio.com";
+
+let products = [];
 let cart = JSON.parse(localStorage.getItem('techstore_cart')) || [];
 
-// --- تشغيل السلة الجانبية (فتح وإغلاق) ---
-const cartSidebar = document.querySelector('.sidebar-cart');
-const cartIcons = document.querySelectorAll('.fa-cart-shopping');
-const closeCartBtn = document.querySelector('.cart-header .fa-xmark');
-
-cartIcons.forEach(icon => {
-    icon.parentElement.addEventListener('click', (e) => {
-        if(!e.target.classList.contains('btn-add') && !e.target.parentElement.classList.contains('btn-add')) {
-            cartSidebar.style.display = 'block';
+// --- جلب المنتجات من Firebase ---
+async function fetchProductsFromDB() {
+    try {
+        const response = await fetch(`${FIREBASE_URL}/products.json`);
+        const data = await response.json();
+        
+        products = [];
+        if (data) {
+            // تحويل البيانات من أوبجكت لمصفوفة عشان نعرف نعرضها
+            Object.keys(data).forEach(key => {
+                products.push({ id: key, ...data[key] });
+            });
         }
-    });
-});
-
-if(closeCartBtn) {
-    closeCartBtn.addEventListener('click', () => {
-        cartSidebar.style.display = 'none';
-    });
+        renderProducts();
+    } catch (error) {
+        console.error("خطأ في جلب المنتجات:", error);
+        document.getElementById('productsContainer').innerHTML = "<p style='color:red; text-align:center; grid-column:1/-1;'>حدث خطأ في الاتصال بقاعدة البيانات.</p>";
+    }
 }
 
-cartSidebar.style.display = 'none';
-cartSidebar.style.position = 'fixed';
-cartSidebar.style.left = '0';
-cartSidebar.style.top = '0';
-cartSidebar.style.height = '100vh';
-cartSidebar.style.zIndex = '1000';
-cartSidebar.style.boxShadow = '5px 0 15px rgba(0,0,0,0.5)';
-
-// --- عرض المنتجات في الصفحة الرئيسية ---
+// --- عرض المنتجات ---
 function renderProducts() {
-    const productsGrid = document.querySelector('.products-grid');
-    if (!productsGrid) return;
-
-    productsGrid.innerHTML = ''; 
+    const container = document.getElementById('productsContainer');
+    container.innerHTML = '';
 
     if (products.length === 0) {
-        productsGrid.innerHTML = `
+        container.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: var(--text-gray);">
                 <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
                 <h2>المتجر فارغ حالياً</h2>
                 <p>سيتم إضافة المنتجات قريباً من خلال لوحة التحكم.</p>
-            </div>
-        `;
+            </div>`;
         return;
     }
 
     products.forEach(product => {
-        const productHTML = `
+        container.innerHTML += `
             <div class="product-card">
-                ${product.tag ? `<span class="product-tag">${product.tag}</span>` : ''}
-                <i class="fa-regular fa-heart" style="position: absolute; top: 15px; left: 15px; cursor: pointer;"></i>
+                <i class="fa-regular fa-heart" style="position: absolute; top: 12px; left: 12px; cursor: pointer; z-index: 2;"></i>
                 <div class="product-img"><i class="${product.icon || 'fa-solid fa-box'}"></i></div>
                 <h3 class="product-title">${product.name}</h3>
-                <div class="stars">
-                    4.9 <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                </div>
-                <div class="product-price">${product.price.toLocaleString()} جنيه</div>
-                <button class="btn-add" onclick="addToCart(${product.id})"><i class="fa-solid fa-cart-shopping"></i> أضف للسلة</button>
+                <div class="product-price">${Number(product.price).toLocaleString()} جنيه</div>
+                <button class="btn-add" onclick="addToCart('${product.id}')"><i class="fa-solid fa-cart-shopping"></i> أضف للسلة</button>
             </div>
         `;
-        productsGrid.innerHTML += productHTML;
     });
 }
 
-// --- وظائف السلة ---
+// --- تشغيل السلة ---
+const cartSidebar = document.getElementById('cartSidebar');
+document.querySelector('.cart-trigger').addEventListener('click', () => cartSidebar.style.display = 'block');
+document.getElementById('closeCartBtn').addEventListener('click', () => cartSidebar.style.display = 'none');
+
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
     const existingItem = cart.find(item => item.id === productId);
-    if (existingItem) {
-        existingItem.qty += 1;
-    } else {
-        cart.push({ ...product, qty: 1 });
-    }
+    if (existingItem) existingItem.qty += 1;
+    else cart.push({ ...product, qty: 1 });
     
     updateCart();
-    alert(`تم إضافة ${product.name} للسلة`);
-}
-
-function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    updateCart();
-}
-
-function changeQty(productId, amount) {
-    const item = cart.find(item => item.id === productId);
-    if (item) {
-        item.qty += amount;
-        if (item.qty <= 0) removeFromCart(productId);
-        else updateCart();
-    }
+    // تأثير بسيط عند الإضافة
+    cartSidebar.style.display = 'block';
 }
 
 function updateCart() {
@@ -101,82 +76,45 @@ function updateCart() {
 }
 
 function renderCart() {
-    const cartContainer = document.querySelector('.cart-items-container');
-    const totalElement = document.querySelector('.total-row span:last-child');
-    const badgeElements = document.querySelectorAll('.badge');
-
-    if (!cartContainer) return;
-    cartContainer.innerHTML = '';
-    
+    const cartItemsDiv = document.getElementById('cartItems');
     let total = 0;
-    let totalItems = 0;
+    let count = 0;
+    cartItemsDiv.innerHTML = '';
 
     cart.forEach(item => {
         total += item.price * item.qty;
-        totalItems += item.qty;
-
-        cartContainer.innerHTML += `
-            <div class="cart-item">
-                <div class="cart-item-img" style="display:flex; justify-content:center; align-items:center; background: var(--bg-color); color: var(--primary-blue); font-size: 1.5rem;"><i class="${item.icon || 'fa-solid fa-box'}"></i></div>
-                <div class="cart-item-info" style="flex: 1;">
-                    <h4>${item.name}</h4>
-                    <p>${item.price.toLocaleString()} جنيه</p>
-                    <div class="qty-controls">
-                        <button onclick="changeQty(${item.id}, -1)">-</button>
-                        <span>${item.qty}</span>
-                        <button onclick="changeQty(${item.id}, 1)">+</button>
-                    </div>
+        count += item.qty;
+        cartItemsDiv.innerHTML += `
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                <div style="width: 50px; height: 50px; background: var(--bg-color); display:flex; align-items:center; justify-content:center; color: var(--primary-blue); border-radius: 5px;"><i class="${item.icon}"></i></div>
+                <div style="flex: 1;">
+                    <h4 style="font-size: 0.9rem; margin-bottom: 5px;">${item.name}</h4>
+                    <p style="color: var(--primary-blue); font-weight: bold;">${Number(item.price).toLocaleString()} جنيه</p>
                 </div>
-                <i class="fa-regular fa-trash-can" style="color: #ff4d4d; cursor: pointer;" onclick="removeFromCart(${item.id})"></i>
+                <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                    <i class="fa-solid fa-trash" style="color: #ff4d4d; cursor: pointer;" onclick="cart.splice(cart.indexOf(${item}), 1); updateCart();"></i>
+                    <span style="font-weight: bold;">x${item.qty}</span>
+                </div>
             </div>
         `;
     });
 
-    if (totalElement) totalElement.innerText = `${total.toLocaleString()} جنيه`;
-    
-    badgeElements.forEach(badge => {
-        if(badge.parentElement.innerText.includes('السلة')) {
-            badge.innerText = totalItems;
-        }
-    });
-
-    // ربط زرار إتمام الطلب بالواتساب
-    const checkoutBtn = document.querySelector('.btn-checkout');
-    if (checkoutBtn) {
-        checkoutBtn.onclick = sendOrderToWhatsApp;
-    }
+    document.getElementById('cartTotal').innerText = `${total.toLocaleString()} جنيه`;
+    document.querySelector('.cart-count').innerText = count;
 }
 
-// --- إرسال الطلب عبر الواتساب ---
-function sendOrderToWhatsApp() {
-    if (cart.length === 0) {
-        alert('السلة فارغة، أضف منتجات أولاً!');
-        return;
-    }
-
-    let message = "أهلاً، عندي طلب جديد من متجر TECHSTORE ⚡\n\nتفاصيل الطلب:\n------------------------\n";
+// --- إرسال الطلب واتساب ---
+document.getElementById('checkoutBtn').addEventListener('click', () => {
+    if (cart.length === 0) return alert('السلة فارغة!');
+    let msg = "طلب جديد TECHSTORE ⚡\n\n";
     let total = 0;
+    cart.forEach(i => { msg += `▪ ${i.name} (x${i.qty}) - ${i.price * i.qty} ج\n`; total += i.price * i.qty; });
+    msg += `\nالإجمالي: ${total} جنيه`;
+    window.open(`https://wa.me/201121189810?text=${encodeURIComponent(msg)}`, '_blank');
+});
 
-    cart.forEach(item => {
-        message += `▪️ ${item.name} \nالكمية: ${item.qty} | السعر: ${(item.price * item.qty).toLocaleString()} جنيه\n`;
-        total += item.price * item.qty;
-    });
-
-    message += `------------------------\nالإجمالي: ${total.toLocaleString()} جنيه\n\nبرجاء تأكيد الطلب.`;
-
-    // رقم الواتساب الخاص بك
-    const phoneNumber = "201121189810"; 
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
-    // فتح الواتساب في نافذة جديدة
-    window.open(whatsappUrl, '_blank');
-
-    // تصفير السلة بعد إرسال الطلب (اختياري، تقدر تشيل السطرين دول لو مش حابب السلة تفضى)
-    cart = [];
-    updateCart();
-}
-
+// تشغيل عند فتح الصفحة
 window.onload = () => {
-    renderProducts();
+    fetchProductsFromDB();
     renderCart();
 };
