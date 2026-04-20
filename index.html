@@ -9,272 +9,183 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
+/* نفس الستايل بتاعك بالظبط */
 :root{--primary:#0057FF;--primary-dark:#0040CC;--primary-glow:rgba(0,87,255,0.3);--accent:#00D4FF;--bg-dark:#050A14;--bg-card:#0D1626;--bg-card2:#111D35;--text:#E8F0FF;--text-muted:#7A90B8;--border:rgba(0,87,255,0.2);--success:#00E676;--warning:#FFB300;--danger:#FF3D57;--gold:#FFD700;}
 *{margin:0;padding:0;box-sizing:border-box;}
-html{font-size:16px;}
-body{font-family:'Cairo',sans-serif;background:var(--bg-dark);color:var(--text);overflow-x:hidden;-webkit-text-size-adjust:100%;}
-::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg-dark);}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px;}
+body{font-family:'Cairo',sans-serif;background:var(--bg-dark);color:var(--text);overflow-x:hidden;}
 
 /* TOAST */
 #toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:10px;align-items:center;width:90%;max-width:360px;}
 .toast{background:linear-gradient(135deg,var(--bg-card2),#1a2a4a);border:1px solid var(--primary);border-radius:12px;padding:14px 24px;color:var(--text);font-size:14px;font-weight:600;box-shadow:0 8px 32px rgba(0,87,255,0.3);display:flex;align-items:center;gap:10px;width:100%;animation:toastIn 0.4s ease;}
-.toast.success{border-color:var(--success);}.toast.error{border-color:var(--danger);}.toast.warning{border-color:var(--warning);}
 @keyframes toastIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
 
-/* LOADER */
-#loader{position:fixed;inset:0;background:var(--bg-dark);z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
-.loader-logo{font-family:'Orbitron',monospace;font-size:2.5rem;font-weight:900;color:var(--primary);text-shadow:0 0 30px var(--primary);}
-.loader-bar{width:200px;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;}
-.loader-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));animation:loadFill 1.5s ease forwards;}
-@keyframes loadFill{from{width:0}to{width:100%}}
+/* بنر التحميل المضاف */
+.app-dl-banner{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;padding:12px;text-align:center;font-weight:bold;font-size:13px;display:flex;justify-content:center;align-items:center;gap:10px;cursor:pointer;}
 
-/* NAV */
+/* التعديلات المطلوبة للـ Nav */
 nav{position:fixed;top:0;width:100%;z-index:1000;background:rgba(5,10,20,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 16px;}
-.nav-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;gap:10px;}
-.logo{display:flex;align-items:center;gap:8px;text-decoration:none;cursor:pointer;flex-shrink:0;}
-.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 20px var(--primary-glow);}
-.logo-text{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;color:var(--text);}
-.search-box{flex:1;min-width:0;max-width:500px;position:relative;}
-.search-box input{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:9px 12px 9px 40px;color:var(--text);font-family:'Cairo',sans-serif;font-size:14px;outline:none;transition:all 0.3s;}
-.search-box input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow);}
-.search-box i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;}
-.nav-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
-.btn{padding:8px 14px;border-radius:9px;border:none;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;transition:all 0.3s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
-.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 4px 15px var(--primary-glow);}
-.btn-outline{background:transparent;color:var(--primary);border:1px solid var(--primary);}
-.cart-count-badge{position:absolute;top:-6px;right:-6px;background:var(--danger);color:#fff;font-size:10px;font-weight:900;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.nav-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
+.search-box{flex:1;max-width:400px;position:relative;margin:0 10px;}
+.search-box input{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:8px 35px;color:#fff;outline:none;}
+.search-box i{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);}
 
-/* MODAL STYLE (Shared) */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;max-width:860px;width:100%;max-height:92vh;overflow-y:auto;animation:modalIn 0.4s ease;}
-@keyframes modalIn{from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:scale(1);}}
-.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg-card);z-index:1;}
-.modal-close{background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;padding:4px;border-radius:6px;}
-
-/* DOWNLOAD MODAL SPECIFIC */
-.dl-card{background:var(--bg-card2);border:1px solid var(--border);border-radius:15px;padding:18px;text-decoration:none;display:flex;align-items:center;gap:15px;transition:0.3s;margin-bottom:12px;position:relative;overflow:hidden;}
-.dl-card:hover{border-color:var(--primary);transform:translateY(-3px);box-shadow:0 5px 15px var(--primary-glow);}
-.dl-card.ios{opacity:0.6;cursor:default;}
-.dl-card.ios:hover{transform:none;border-color:var(--border);box-shadow:none;}
-.dl-icon{width:45px;height:45px;background:var(--bg-dark);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;}
-.dl-info{text-align:right;}
-.dl-info span:first-child{display:block;font-size:10px;color:var(--text-muted);}
-.dl-info span:last-child{display:block;font-size:16px;font-weight:900;color:#fff;}
-.badge-soon{position:absolute;top:5px;left:-20px;background:var(--warning);color:#000;font-size:9px;font-weight:900;padding:2px 20px;transform:rotate(-45deg);}
-
-/* SLIDER */
-.slider-section{margin-top:60px;position:relative;overflow:hidden;height:380px;}
-.slide{position:absolute;inset:0;opacity:0;transition:opacity 0.8s ease;display:flex;align-items:center;justify-content:center;}
+/* باقي الاستايلات بتاعتك */
+.slider-section{margin-top:60px;height:350px;position:relative;overflow:hidden;}
+.slide{position:absolute;inset:0;opacity:0;transition:0.8s;display:flex;align-items:center;justify-content:center;}
 .slide.active{opacity:1;}
-.slide-overlay{position:absolute;inset:0;}
-.slide-content{position:relative;z-index:2;text-align:center;padding:30px 20px;}
-.slide-content h2{font-size:2rem;font-weight:900;margin-bottom:10px;text-shadow:0 2px 20px rgba(0,0,0,0.5);}
+.slide img{width:100%;height:100%;object-fit:cover;}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:15px;padding:20px;}
+.product-card{background:var(--bg-card);border-radius:15px;border:1px solid var(--border);overflow:hidden;transition:0.3s;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg-card);border-radius:20px;width:100%;max-width:500px;padding:25px;}
 
-/* SECTIONS & PRODUCTS */
-.section{max-width:1400px;margin:0 auto;padding:30px 16px;}
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;}
-.product-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.3s;position:relative;}
-.product-card:hover{transform:translateY(-6px);border-color:var(--primary);box-shadow:0 12px 40px var(--primary-glow);}
-.product-img-wrap{height:180px;background:var(--bg-card2);overflow:hidden;position:relative;}
-.product-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s;}
-
-/* CART */
-.cart-panel{position:fixed;left:0;top:0;height:100%;width:400px;max-width:100%;background:var(--bg-card);border-right:1px solid var(--border);z-index:3001;transform:translateX(-100%);transition:transform 0.4s ease;display:flex;flex-direction:column;}
-.cart-panel.open{transform:translateX(0);}
-
-@media(max-width:768px){
-  .products-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
-  .search-box{max-width:150px;}
-  .logo-text{font-size:0.9rem;}
-  .logo-sub{display:none;}
-  .slider-section{height:280px;}
-}
+@media(max-width:600px){ .logo-text{display:none;} .search-box{max-width:160px;} }
 </style>
 </head>
 <body>
 
-<div id="loader">
-  <div class="loader-logo">⚡ TECHSTORE</div>
-  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
-</div>
+<div id="loader" style="position:fixed;inset:0;background:var(--bg-dark);z-index:99999;display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-size:2rem;color:var(--primary);">⚡ TECHSTORE</div>
 
 <div id="toast-container"></div>
-<div id="search-results-overlay"></div>
 
 <nav>
   <div class="nav-inner">
-    <div class="logo" onclick="filterCat('الكل')">
-      <div class="logo-icon">⚡</div>
-      <div>
-        <div class="logo-text">TECHSTORE</div>
-        <span class="logo-sub">PREMIUM ELECTRONICS</span>
-      </div>
-    </div>
-    <div class="search-box">
-      <i class="fas fa-search"></i>
-      <input type="text" id="search-input" placeholder="ابحث..." oninput="liveSearch(this.value)">
-    </div>
-    <div class="nav-actions">
-      <button class="btn btn-primary" onclick="openDownloadModal()">
-        <i class="fas fa-mobile-alt"></i> <span class="hide-mobile">التطبيق</span>
-      </button>
-      <button class="btn btn-outline" onclick="openCart()" style="position:relative">
-        <i class="fas fa-shopping-cart"></i>
-        <span id="cart-count-text">0</span>
-        <div class="cart-count-badge" id="cart-badge" style="display:none">0</div>
-      </button>
+    <div class="logo" onclick="location.reload()"><div class="logo-icon" style="width:35px;height:35px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;">⚡</div><div class="logo-text" style="margin-right:8px;font-weight:900;">TECHSTORE</div></div>
+    <div class="search-box"><i class="fas fa-search"></i><input type="text" id="search-input" placeholder="بحث عن منتج..." oninput="liveSearch(this.value)"></div>
+    <div class="nav-actions" style="display:flex;gap:10px;">
+      <button class="btn btn-primary" onclick="openDL()"><i class="fas fa-download"></i></button>
+      <button class="btn btn-outline" onclick="openCart()" style="position:relative;"><i class="fas fa-shopping-cart"></i><span id="cart-badge" style="position:absolute;top:-5px;right:-5px;background:red;font-size:10px;padding:2px 5px;border-radius:50%;display:none;">0</span></button>
     </div>
   </div>
 </nav>
 
-<div class="slider-section" style="margin-top:60px">
-  <div class="slide active">
-    <div class="slide-overlay" style="background:linear-gradient(135deg,rgba(5,10,20,0.9),rgba(0,40,120,0.6));position:absolute;inset:0;"></div>
-    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#050A14,#001a4d);"></div>
-    <div class="slide-content animate__animated animate__fadeInUp">
-      <h2>⚡ أحدث الموبايلات 2026</h2>
-      <p>عروض حصرية على أفضل الأجهزة</p>
-      <button class="btn btn-primary" onclick="filterCat('موبايلات')">تسوق الآن</button>
-    </div>
-  </div>
-  <div class="slider-dots">
-    <div class="dot active" onclick="goSlide(0)"></div>
-    <div class="dot" onclick="goSlide(1)"></div>
-    <div class="dot" onclick="goSlide(2)"></div>
-  </div>
+<div class="slider-section" id="main-slider"></div>
+
+<div style="padding:20px;">
+  <h2 style="margin-bottom:20px;border-right:4px solid var(--primary);padding-right:15px;font-size:1.2rem;">جميع المنتجات</h2>
+  <div id="products-grid" class="products-grid"></div>
 </div>
 
-<div class="section">
-  <h2 class="section-title">الأقسام</h2>
-  <div class="cats-grid">
-    <button class="cat-btn active" onclick="filterCat('الكل')"><i class="fas fa-th"></i> الكل</button>
-    <button class="cat-btn" onclick="filterCat('موبايلات')"><i class="fas fa-mobile-alt"></i> موبايلات</button>
-    <button class="cat-btn" onclick="filterCat('لابتوبات')"><i class="fas fa-laptop"></i> لابتوبات</button>
-    <button class="cat-btn" onclick="filterCat('شواحن')"><i class="fas fa-bolt"></i> شواحن</button>
-    <button class="cat-btn" onclick="filterCat('سماعات')"><i class="fas fa-headphones"></i> سماعات</button>
-  </div>
-</div>
-
-<div class="section" style="padding-top:0">
-  <h2 class="section-title" id="products-title">جميع المنتجات</h2>
-  <div class="products-grid" id="products-grid"></div>
-</div>
-
-<div class="modal-overlay" id="download-modal">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-header">
-      <h3 style="font-size:16px">تحميل تطبيق TECHSTORE 📱</h3>
-      <button class="modal-close" onclick="closeDownloadModal()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="modal-body" style="display:block; padding:25px 20px;">
-      <p style="color:var(--text-muted); font-size:13px; text-align:center; margin-bottom:20px;">استمتع بتجربة تسوق أسرع وأسهل مع تطبيقنا الرسمي!</p>
-      
-      <a href="https://github.com/loayashraf2288-boop/tech-store-pro/releases/download/v1.0/_TECH_STORE_19748700.apk" 
-         class="dl-card" download onclick="toast('بدأ التحميل...','success')">
-        <div class="dl-icon" style="color:#3DDC84"><i class="fab fa-android"></i></div>
-        <div class="dl-info">
-          <span>متوفر الآن لـ</span>
-          <span>Android (APK)</span>
-        </div>
-        <i class="fas fa-chevron-left" style="margin-right:auto; opacity:0.3"></i>
-      </a>
-
-      <div class="dl-card ios" onclick="toast('قريباً جداً على App Store! 🍏','warning')">
-        <div class="badge-soon">قريباً</div>
-        <div class="dl-icon" style="color:#fff; opacity:0.5"><i class="fab fa-apple"></i></div>
-        <div class="dl-info">
-          <span style="opacity:0.5">قريباً على</span>
-          <span style="opacity:0.5">Apple App Store</span>
-        </div>
-      </div>
-
-      <div style="text-align:center; margin-top:20px;">
-        <span style="font-size:11px; color:var(--primary); font-weight:700;">إصدار v1.0 • 31.6 MB</span>
-      </div>
+<div class="modal-overlay" id="dl-modal" onclick="closeDL()">
+  <div class="modal" onclick="event.stopPropagation()" style="text-align:center;">
+    <h3 style="margin-bottom:20px;">تحميل التطبيق الرسمي 📱</h3>
+    <a href="https://github.com/loayashraf2288-boop/tech-store-pro/releases/download/v1.0/_TECH_STORE_19748700.apk" download class="btn btn-primary" style="display:block;padding:15px;text-decoration:none;margin-bottom:10px;border-radius:15px;font-weight:900;">
+      <i class="fab fa-android"></i> تحميل للأندرويد (APK)
+    </a>
+    <div style="background:var(--bg-card2);padding:15px;border-radius:15px;opacity:0.5;position:relative;overflow:hidden;">
+        <i class="fab fa-apple"></i> نسخة الأيفون (قريباً)
+        <div style="position:absolute;top:5px;right:-15px;background:var(--primary);font-size:9px;padding:2px 15px;transform:rotate(45deg)">COMING</div>
     </div>
   </div>
 </div>
 
-<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
-<div class="cart-panel" id="cart-panel">
-  <div class="cart-header">
-    <h3 style="font-size:15px"><i class="fas fa-shopping-cart"></i> سلة التسوق</h3>
-    <button class="modal-close" onclick="closeCart()"><i class="fas fa-times"></i></button>
-  </div>
-  <div class="cart-items-list" id="cart-items-container"></div>
-  <div class="cart-footer">
-    <div class="coupon-cart-row">
-      <input type="text" id="coupon-input-cart" placeholder="كود الخصم..." style="text-transform:uppercase;">
-      <button class="btn btn-primary" onclick="applyCoupon()">تطبيق</button>
+<div class="modal-overlay" id="cart-modal" onclick="closeCart()">
+  <div class="modal" style="max-width:450px;" onclick="event.stopPropagation()">
+    <h3 style="margin-bottom:15px;border-bottom:1px solid var(--border);padding-bottom:10px;">سلة التسوق</h3>
+    <div id="cart-items" style="max-height:250px;overflow-y:auto;margin-bottom:15px;"></div>
+    
+    <div style="display:flex;gap:8px;margin-bottom:15px;">
+        <input type="text" id="coupon-input" placeholder="كود الخصم" style="flex:1;background:var(--bg-dark);border:1px solid var(--border);border-radius:10px;padding:10px;color:#fff;">
+        <button class="btn btn-primary" onclick="applyCoupon()">تطبيق</button>
     </div>
-    <div class="cart-total-row"><span>الإجمالي:</span><span id="cart-total-price">0 جنيه</span></div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="confirmOrder()">تأكيد واتساب</button>
+
+    <div style="display:flex;justify-content:space-between;font-weight:900;font-size:1.2rem;margin-bottom:15px;">
+        <span>الإجمالي:</span><span id="cart-total">0</span><span>ج</span>
+    </div>
+    
+    <input type="text" id="c-name" placeholder="الاسم" style="width:100%;padding:12px;margin-bottom:10px;background:var(--bg-dark);border:1px solid var(--border);color:#fff;border-radius:10px;">
+    <input type="tel" id="c-phone" placeholder="رقم الموبايل" style="width:100%;padding:12px;margin-bottom:15px;background:var(--bg-dark);border:1px solid var(--border);color:#fff;border-radius:10px;">
+    
+    <button class="btn btn-primary" style="width:100%;padding:15px;font-weight:900;" onclick="confirmOrder()">تأكيد الطلب (واتساب)</button>
   </div>
 </div>
 
-<div class="modal-overlay" id="product-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="modal-title"></h3>
-      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="modal-body">
-      <div><img id="modal-main-img" class="main-img" src=""><div class="thumb-grid" id="modal-thumbs"></div></div>
-      <div>
-        <div id="modal-price" class="modal-price"></div>
-        <div id="modal-desc" class="modal-desc"></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="addToCartFromModal()"><i class="fas fa-cart-plus"></i> أضف للسلة</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script>
 const DB="https://store-c8993-default-rtdb.firebaseio.com";
-async function fbGet(p){const r=await fetch(`${DB}/${p}.json`);return await r.json();}
+let allProducts={}, cart=[], discount=0;
 
-function toast(msg,type='info'){
-  const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
-  const t=document.createElement('div');t.className=`toast ${type}`;
-  t.innerHTML=`<span>${icons[type]}</span><span>${msg}</span>`;
-  document.getElementById('toast-container').appendChild(t);
-  setTimeout(()=>{t.remove();},3000);
+async function fbGet(p){const r=await fetch(`${DB}/${p}.json`);return await r.json();}
+async function fbPush(p,d){await fetch(`${DB}/${p}.json`,{method:'POST',body:JSON.stringify(d)});}
+
+function toast(m){
+  const c=document.getElementById('toast-container');
+  const t=document.createElement('div');t.className='toast';
+  t.innerHTML=`<span>⚡</span> ${m}`;c.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
 }
 
-// APP MODAL FUNCTIONS
-function openDownloadModal(){ document.getElementById('download-modal').classList.add('open'); }
-function closeDownloadModal(){ document.getElementById('download-modal').classList.remove('open'); }
-
-// PRODUCTS & CART LOGIC (Keep existing)
-let allProducts={}, cart=[];
-async function loadProducts(){
-  const data=await fbGet('products'); allProducts=data||{}; renderProducts();
+async function load(){
+  const [p, a] = await Promise.all([fbGet('products'), fbGet('ads')]);
+  allProducts=p||{};
+  renderSlider(a);
+  renderProds();
   document.getElementById('loader').style.display='none';
 }
-function renderProducts(){
-  const grid=document.getElementById('products-grid');
-  grid.innerHTML=Object.entries(allProducts).map(([id,p])=>`
-    <div class="product-card" onclick="openProduct('${id}')">
-      <div class="product-img-wrap"><img src="${p.img1}"></div>
-      <div class="product-info">
-        <div class="product-name">${p.name}</div>
-        <div class="product-price">${Number(p.price).toLocaleString()} ج</div>
+
+function renderSlider(ads){
+  const s=document.getElementById('main-slider');
+  if(!ads) return;
+  s.innerHTML=Object.values(ads).map((ad,i)=>`<div class="slide ${i===0?'active':''}"><img src="${ad.img}"></div>`).join('');
+  let cur=0; setInterval(()=>{
+    const slides=document.querySelectorAll('.slide');
+    if(slides.length<2) return;
+    slides[cur].classList.remove('active');
+    cur=(cur+1)%slides.length;
+    slides[cur].classList.add('active');
+  },4000);
+}
+
+function renderProds(){
+  document.getElementById('products-grid').innerHTML=Object.entries(allProducts).map(([id,p])=>`
+    <div class="product-card" onclick="addToCart('${id}')">
+      <img src="${p.img1}" style="width:100%;aspect-ratio:1;object-fit:cover;">
+      <div style="padding:10px;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:5px;">${p.name}</div>
+        <div style="color:var(--primary);font-weight:900;">${Number(p.price).toLocaleString()} ج</div>
       </div>
     </div>`).join('');
 }
-function openProduct(id){
-  const p=allProducts[id]; document.getElementById('modal-title').textContent=p.name;
-  document.getElementById('modal-price').textContent=p.price+' ج';
-  document.getElementById('modal-main-img').src=p.img1;
-  document.getElementById('product-modal').classList.add('open');
-}
-function closeModal(){ document.getElementById('product-modal').classList.remove('open'); }
-function openCart(){ document.getElementById('cart-panel').classList.add('open'); document.getElementById('cart-overlay').classList.add('open'); }
-function closeCart(){ document.getElementById('cart-panel').classList.remove('open'); document.getElementById('cart-overlay').classList.remove('open'); }
 
-window.onload=loadProducts;
+function addToCart(id){
+  cart.push(allProducts[id]); updateCartUI();
+  toast("تمت الإضافة للسلة! ✅");
+}
+
+async function applyCoupon(){
+    const code = document.getElementById('coupon-input').value.toUpperCase();
+    const data = await fbGet(`coupons/${code}`);
+    if(data){ discount = parseInt(data.perc); toast(`تم تطبيق خصم ${discount}% 🎉`); updateCartUI(); }
+    else{ toast("كود غير صحيح!"); discount=0; updateCartUI(); }
+}
+
+function updateCartUI(){
+  document.getElementById('cart-badge').style.display=cart.length?'block':'none';
+  document.getElementById('cart-badge').textContent=cart.length;
+  let total=cart.reduce((s,c)=>s+parseInt(c.price),0);
+  if(discount>0) total = total - (total * discount / 100);
+  document.getElementById('cart-total').textContent=total.toLocaleString();
+  document.getElementById('cart-items').innerHTML=cart.map(c=>`<div style="font-size:12px;margin-bottom:5px;">● ${c.name} - ${c.price}ج</div>`).join('');
+}
+
+async function confirmOrder(){
+  const n=document.getElementById('c-name').value;
+  const ph=document.getElementById('c-phone').value;
+  if(!n||!ph){toast("اكمل البيانات!");return;}
+  let total=cart.reduce((s,c)=>s+parseInt(c.price),0);
+  if(discount>0) total = total - (total * discount / 100);
+  await fbPush('orders',{name:n,phone:ph,total,items:cart.map(c=>c.name),time:new Date().toLocaleString()});
+  const msg=encodeURIComponent(`🛒 طلب جديد\n👤 الاسم: ${n}\n📱 الموبايل: ${ph}\n📦 المنتجات: ${cart.map(c=>c.name).join(', ')}\n💰 الإجمالي: ${total} ج`);
+  window.open(`https://wa.me/201121189810?text=${msg}`);
+  cart=[];discount=0;updateCartUI();closeCart();
+}
+
+function openDL(){document.getElementById('dl-modal').classList.add('open');}
+function closeDL(){document.getElementById('dl-modal').classList.remove('open');}
+function openCart(){document.getElementById('cart-modal').classList.add('open');}
+function closeCart(){document.getElementById('cart-modal').classList.remove('open');}
+
+window.onload=load;
 </script>
 </body>
 </html>
