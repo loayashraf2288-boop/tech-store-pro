@@ -16,23 +16,27 @@
                 <p class="subtitle">لوحة التحكم - تسجيل الدخول</p>
             </div>
             
-            <form>
+            <form id="loginForm">
                 <div class="input-field">
                     <i class="fas fa-user"></i>
-                    <input type="text" placeholder="اسم المستخدم">
+                    <input type="text" id="username" placeholder="اسم المستخدم" required>
                 </div>
                 <div class="input-field">
                     <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="كلمة المرور">
-                    <i class="fas fa-eye show-pass"></i>
+                    <input type="password" id="password" placeholder="كلمة المرور" required>
+                    <i class="fas fa-eye show-pass" id="togglePassword" style="cursor: pointer;"></i>
                 </div>
-                <button type="submit" class="btn-login">تسجيل الدخول <i class="fas fa-arrow-left"></i></button>
+                <button type="submit" class="btn-login">
+                    تسجيل الدخول <i class="fas fa-arrow-left"></i>
+                </button>
             </form>
 
             <div class="secure-footer">
-                <i class="fas fa-shield-check"></i> لوحة تحكم آمنة ومُشفرة
+                <i class="fas fa-shield-alt"></i> لوحة تحكم آمنة ومُشفرة
             </div>
         </div>
     </div>
+
+    <script src="admin-script.js"></script>
 </body>
 </html>
