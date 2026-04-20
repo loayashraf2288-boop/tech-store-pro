@@ -3,38 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechStore - Login</title>
+    <title>تسجيل الدخول | TECHSTORE</title>
     <link rel="stylesheet" href="admin-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="login-page">
-    <div class="login-container">
+<body class="admin-body">
+
+    <div id="loginPage" class="login-page">
         <div class="login-box">
-            <div class="logo-section">
-                <div class="bolt-icon"><i class="fas fa-bolt"></i></div>
-                <h1 class="logo-text">TECH<span>STORE</span></h1>
-                <p class="subtitle">لوحة التحكم - تسجيل الدخول</p>
-            </div>
-            
+            <div class="bolt-icon"><i class="fas fa-bolt"></i></div>
+            <h1 class="logo-text">TECH<span>STORE</span></h1>
+            <p>لوحة التحكم - تسجيل الدخول</p>
             <form id="loginForm">
                 <div class="input-field">
                     <i class="fas fa-user"></i>
-                    <input type="text" id="username" placeholder="اسم المستخدم" required>
+                    <input type="text" id="user" placeholder="اسم المستخدم" required>
                 </div>
                 <div class="input-field">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="كلمة المرور" required>
-                    <i class="fas fa-eye show-pass" id="togglePassword" style="cursor: pointer;"></i>
+                    <input type="password" id="pass" placeholder="كلمة المرور" required>
                 </div>
-                <button type="submit" class="btn-login">
-                    تسجيل الدخول <i class="fas fa-arrow-left"></i>
-                </button>
+                <button type="submit" class="btn-login">دخول النظام</button>
             </form>
-
-            <div class="secure-footer">
-                <i class="fas fa-shield-alt"></i> لوحة تحكم آمنة ومُشفرة
-            </div>
+            <div class="secure-footer"><i class="fas fa-shield-alt"></i> حماية آمنة 100%</div>
         </div>
+    </div>
+
+    <div id="dashboardPage" class="dashboard-wrapper" style="display:none;">
+        <aside class="sidebar">
+            <h2 class="logo-text">TECH<span>STORE</span></h2>
+            <nav>
+                <a href="#" class="active"><i class="fas fa-home"></i> الرئيسية</a>
+                <a href="#"><i class="fas fa-shopping-cart"></i> الطلبات</a>
+                <a href="#"><i class="fas fa-box"></i> المنتجات</a>
+                <a href="#"><i class="fas fa-users"></i> العملاء</a>
+                <a href="javascript:location.reload()" class="logout"><i class="fas fa-sign-out-alt"></i> خروج</a>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="dash-header">
+                <h2>لوحة التحكم | مرحباً <span id="adminName">Loay</span></h2>
+            </header>
+            
+            <section class="stats-grid">
+                <div class="stat-card"><h3>126</h3><p>المنتجات</p></div>
+                <div class="stat-card"><h3>1,250</h3><p>العملاء</p></div>
+                <div class="stat-card"><h3>69,998 ج.م</h3><p>الأرباح</p></div>
+            </section>
+
+            <div class="charts-area">
+                <canvas id="salesChart"></canvas>
+            </div>
+
+            <footer class="admin-footer">
+                جميع حقوق الملكية محفوظة لـ <span>Loay</span> © 2026
+            </footer>
+        </main>
     </div>
 
     <script src="admin-script.js"></script>
