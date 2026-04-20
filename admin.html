@@ -3,174 +3,286 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TECHSTORE - لوحة التحكم</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<title>TECHSTORE - لوحة الإدارة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <style>
-:root{--primary:#0057FF;--bg:#050A14;--card:#0D1626;--text:#E8F0FF;--border:rgba(0,87,255,0.2);}
-body{font-family:'Cairo';background:var(--bg);color:var(--text);margin:0;display:flex;overflow-x:hidden;}
+:root{--primary:#0057FF;--primary-dark:#0040CC;--primary-glow:rgba(0,87,255,0.3);--accent:#00D4FF;--bg-dark:#050A14;--bg-card:#0D1626;--bg-card2:#111D35;--text:#E8F0FF;--text-muted:#7A90B8;--border:rgba(0,87,255,0.2);--success:#00E676;--warning:#FFB300;--danger:#FF3D57;--gold:#FFD700;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--bg-dark);color:var(--text);overflow-x:hidden;}
 
-/* SIDEBAR - Responsive Fix */
-.sidebar{width:240px;background:var(--card);height:100vh;border-left:1px solid var(--border);position:fixed;right:0;top:0;transition:0.3s;z-index:2000;}
-.main{margin-right:240px;padding:20px;width:100%;transition:0.3s;}
+/* TOAST */
+#toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;}
+.toast{background:linear-gradient(135deg,var(--bg-card2),#1a2a4a);border:1px solid var(--primary);border-radius:12px;padding:14px 24px;color:var(--text);font-size:14px;font-weight:600;box-shadow:0 8px 32px rgba(0,87,255,0.3);display:flex;align-items:center;gap:10px;min-width:280px;animation:toastIn 0.4s ease;}
+@keyframes toastIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+
+/* LOGIN */
+#login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.login-box{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:40px;width:380px;max-width:calc(100vw - 40px);text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.form-control{width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-family:'Cairo',sans-serif;font-size:14px;outline:none;transition:border-color 0.3s;margin-bottom:12px;}
+
+/* ADMIN LAYOUT RESPONSIVE FIX */
+#admin-page{display:none;}
+.admin-wrap{display:flex;min-height:100vh;}
+.sidebar{width:250px;background:var(--bg-card);border-left:1px solid var(--border);position:fixed;right:0;top:0;height:100%;z-index:100;display:flex;flex-direction:column;overflow-y:auto;transition:0.3s;}
+.main-content{margin-right:250px;padding:30px;flex:1;transition:0.3s;}
 
 @media(max-width:768px){
-    .sidebar{transform:translateX(100%);}
+    .sidebar{transform:translateX(100%); width:220px;}
     .sidebar.open{transform:translateX(0);}
-    .main{margin-right:0;}
+    .main-content{margin-right:0; padding:15px; padding-top:80px;}
     .menu-btn{display:flex !important;}
 }
 
-.menu-btn{display:none;position:fixed;bottom:20px;right:20px;width:50px;height:50px;background:var(--primary);border-radius:50%;color:#fff;align-items:center;justify-content:center;z-index:3000;box-shadow:0 0 15px var(--primary);}
-.nav-item{padding:15px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:0.3s;}
-.nav-item:hover, .nav-item.active{background:var(--primary);color:#fff;}
-.card{background:var(--card);padding:15px;border-radius:15px;border:1px solid var(--border);margin-bottom:20px;}
-.input{width:100%;padding:10px;margin-bottom:10px;background:var(--bg);border:1px solid var(--border);color:#fff;border-radius:8px;box-sizing:border-box;}
-.btn{background:var(--primary);color:#fff;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:bold;width:100%;}
+.menu-btn{display:none; position:fixed; top:20px; right:20px; z-index:3000; width:45px; height:45px; background:var(--primary); border-radius:10px; color:#fff; align-items:center; justify-content:center; cursor:pointer;}
+.nav-item{padding:13px 20px; cursor:pointer; font-weight:600; font-size:14px; color:var(--text-muted); display:flex; align-items:center; gap:10px; transition:all 0.2s; border-right:3px solid transparent;}
+.nav-item:hover, .nav-item.active{background:rgba(0,87,255,0.12); color:var(--primary); border-right-color:var(--primary);}
 
-/* IMGS */
-.img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-.slot{aspect-ratio:1;border:2px dashed #333;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
-.slot img{width:100%;height:100%;object-fit:cover;position:absolute;}
+/* TABLES & CARDS */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;}
+.table-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:auto;}
+table{width:100%;border-collapse:collapse;}
+th, td{padding:12px; border-bottom:1px solid var(--border); font-size:13px; text-align:right;}
 
-/* TABLES */
-table{width:100%;border-collapse:collapse;margin-top:10px;}
-th, td{padding:10px;border-bottom:1px solid var(--border);text-align:right;font-size:12px;}
-th{color:var(--primary);}
+/* IMAGE UPLOAD GRID */
+.img-upload-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.img-upload-slot{aspect-ratio:1;border:2px dashed var(--border);border-radius:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;background:var(--bg-card2);}
+.img-upload-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.remove-img{position:absolute;top:4px;left:4px;width:22px;height:22px;background:var(--danger);border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;z-index:2;}
 </style>
 </head>
 <body>
 
-<div class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></div>
+<div id="toast-container"></div>
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
 
-<div class="sidebar">
-  <div style="padding:20px;font-weight:900;color:var(--primary);border-bottom:1px solid var(--border)">⚡ TECHSTORE</div>
-  <div class="nav-item active" onclick="showTab('add')"><i class="fas fa-plus"></i> إضافة منتج</div>
-  <div class="nav-item" onclick="showTab('ads')"><i class="fas fa-ad"></i> السلايدر</div>
-  <div class="nav-item" onclick="showTab('orders')"><i class="fas fa-shopping-bag"></i> الطلبات</div>
-  <div class="nav-item" onclick="showTab('coupons')"><i class="fas fa-ticket-alt"></i> الكوبونات</div>
-  <div class="nav-item" onclick="location.reload()" style="margin-top:auto;color:red"><i class="fas fa-sign-out-alt"></i> خروج</div>
+<div id="login-page">
+    <div class="login-box">
+        <div style="font-family:'Orbitron'; font-size:1.5rem; color:var(--primary); margin-bottom:20px;">TECHSTORE ADMIN</div>
+        <input type="text" class="form-control" id="login-user" placeholder="اسم المستخدم">
+        <input type="password" class="form-control" id="login-pass" placeholder="كلمة المرور">
+        <button class="btn btn-primary" style="width:100%; background:var(--primary); border:none; color:#fff; padding:12px; border-radius:10px; cursor:pointer;" onclick="doLogin()">دخول</button>
+    </div>
 </div>
 
-<div class="main">
-  <div id="tab-add" class="tab">
-    <h2>إضافة منتج (8 صور)</h2>
-    <div class="card">
-      <input type="text" id="p-name" class="input" placeholder="اسم المنتج">
-      <input type="number" id="p-price" class="input" placeholder="السعر">
-      <textarea id="p-desc" class="input" placeholder="الوصف" rows="3"></textarea>
-      <div class="img-grid" id="slots"></div>
-      <button class="btn" style="margin-top:15px" onclick="saveProd()">حفظ المنتج</button>
-    </div>
-  </div>
+<div id="admin-page">
+    <div class="admin-wrap">
+        <div class="sidebar" id="sidebar">
+            <div style="padding:20px; border-bottom:1px solid var(--border); font-family:'Orbitron'; font-weight:900; color:var(--primary);">⚡ TECHSTORE</div>
+            
+            <div style="padding:15px">
+                <a href="https://github.com/loayashraf2288-boop/tech-store-pro/releases/download/v1.0/_TECH_STORE_19748700.apk" target="_blank" style="text-decoration:none; display:block; background:var(--primary); color:#fff; text-align:center; padding:10px; border-radius:8px; font-size:12px; font-weight:bold;">
+                    <i class="fas fa-download"></i> رابط الأبلكيشن
+                </a>
+            </div>
 
-  <div id="tab-orders" class="tab" style="display:none">
-    <h2>الطلبات الواردة</h2>
-    <div class="card">
-        <table>
-            <thead><tr><th>الاسم</th><th>الموبايل</th><th>الإجمالي</th><th>حذف</th></tr></thead>
-            <tbody id="orders-list"></tbody>
-        </table>
-    </div>
-  </div>
+            <div class="nav-item active" onclick="showTab('dashboard')"><i class="fas fa-chart-bar"></i> الإحصائيات</div>
+            <div class="nav-item" onclick="showTab('products')"><i class="fas fa-box"></i> المنتجات</div>
+            <div class="nav-item" onclick="showTab('add-product')"><i class="fas fa-plus-circle"></i> إضافة منتج</div>
+            <div class="nav-item" onclick="showTab('ads')"><i class="fas fa-ad"></i> السلايدر (الإعلانات)</div>
+            <div class="nav-item" onclick="showTab('coupons')"><i class="fas fa-ticket-alt"></i> أكواد الخصم</div>
+            <div class="nav-item" onclick="showTab('orders')"><i class="fas fa-shopping-bag"></i> الطلبات</div>
+            <div class="nav-item" onclick="showTab('support')"><i class="fas fa-headset"></i> الدعم الفني</div>
+            <div class="nav-item" onclick="doLogout()" style="color:var(--danger); margin-top:auto;"><i class="fas fa-sign-out-alt"></i> خروج</div>
+        </div>
 
-  <div id="tab-coupons" class="tab" style="display:none">
-    <h2>إدارة الكوبونات</h2>
-    <div class="card">
-        <input type="text" id="cp-code" class="input" placeholder="كود الخصم">
-        <input type="number" id="cp-perc" class="input" placeholder="النسبة %">
-        <button class="btn" onclick="saveCoupon()">إضافة كود</button>
-    </div>
-    <div id="coupons-list" style="margin-top:15px"></div>
-  </div>
+        <div class="main-content">
+            <div class="tab active" id="tab-dashboard">
+                <h2>لوحة المعلومات</h2>
+                <div id="dashboard-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:15px; margin-top:20px;"></div>
+            </div>
 
-  <div id="tab-ads" class="tab" style="display:none">
-    <h2>إدارة السلايدر</h2>
-    <div class="card">
-        <input type="file" class="input" onchange="uploadAd(this)">
-        <div id="ads-list" class="img-grid" style="margin-top:15px"></div>
+            <div class="tab" id="tab-products">
+                <h2>إدارة المنتجات</h2>
+                <div class="table-wrap" style="margin-top:20px;">
+                    <table><thead><tr><th>الصورة</th><th>الاسم</th><th>السعر</th><th>الطلبات</th><th>حذف</th></tr></thead>
+                    <tbody id="products-tbody"></tbody></table>
+                </div>
+            </div>
+
+            <div class="tab" id="tab-add-product">
+                <h2>إضافة منتج (8 صور من الملفات)</h2>
+                <div class="card" style="margin-top:20px;">
+                    <input type="text" class="form-control" id="p-name" placeholder="اسم المنتج">
+                    <input type="number" class="form-control" id="p-price" placeholder="السعر">
+                    <textarea class="form-control" id="p-desc" rows="3" placeholder="الوصف"></textarea>
+                    <div style="color:var(--primary); font-size:12px; margin-bottom:10px;">ارفع الصور من موبايلك (حتى 8):</div>
+                    <div class="img-upload-grid" id="img-slots"></div>
+                    <button class="btn btn-primary" style="width:100%; background:var(--primary); color:#fff; border:none; padding:15px; border-radius:10px; margin-top:20px; font-weight:bold; cursor:pointer;" onclick="saveProduct()">حفظ المنتج</button>
+                </div>
+            </div>
+
+            <div class="tab" id="tab-ads">
+                <h2>إدارة السلايدر (صور الإعلانات)</h2>
+                <div class="card" style="margin-top:20px;">
+                    <label>اختر صورة من موبايلك للسلايدر:</label>
+                    <input type="file" class="form-control" id="ad-input" onchange="uploadAd(this)">
+                    <div id="ads-grid" class="img-upload-grid" style="margin-top:20px;"></div>
+                </div>
+            </div>
+
+            <div class="tab" id="tab-coupons">
+                <h2>أكواد الخصم</h2>
+                <div class="card" style="margin-top:20px;">
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" class="form-control" id="cp-code" placeholder="الكود (مثال: LOAY20)">
+                        <input type="number" class="form-control" id="cp-perc" placeholder="النسبة %">
+                        <button class="btn btn-primary" style="background:var(--primary); color:#fff; border:none; padding:0 20px; border-radius:10px; cursor:pointer;" onclick="saveCoupon()">إضافة</button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table><thead><tr><th>الكود</th><th>النسبة</th><th>حذف</th></tr></thead><tbody id="coupons-tbody"></tbody></table>
+                </div>
+            </div>
+
+            <div class="tab" id="tab-orders">
+                <h2>الطلبات الواردة</h2>
+                <div class="table-wrap" style="margin-top:20px;"><table id="orders-table">
+                    <thead><tr><th>الاسم</th><th>الموبايل</th><th>الإجمالي</th><th>حذف</th></tr></thead>
+                    <tbody id="orders-tbody"></tbody>
+                </table></div>
+            </div>
+
+            <div class="tab" id="tab-support">
+                <h2>الدعم الفني (الشات)</h2>
+                <div id="support-container" style="margin-top:20px;"></div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
-const DB="https://store-c8993-default-rtdb.firebaseio.com";
-let imgData=new Array(8).fill(null);
+const DB = "https://store-c8993-default-rtdb.firebaseio.com";
+let imgData = new Array(8).fill(null);
 
 async function fbGet(p){const r=await fetch(`${DB}/${p}.json`); return await r.json();}
 async function fbSet(p,d){await fetch(`${DB}/${p}.json`,{method:'PUT',body:JSON.stringify(d)});}
-async function fbPush(p,d){await fetch(`${DB}/${p}.json`,{method:'POST',body:JSON.stringify(d)});}
+async function fbPush(p,d){const r=await fetch(`${DB}/${p}.json`,{method:'POST',body:JSON.stringify(d)}); return await r.json();}
 async function fbDel(p){await fetch(`${DB}/${p}.json`,{method:'DELETE'});}
 
-function showTab(t){
-    document.querySelectorAll('.tab').forEach(x=>x.style.display='none');
-    document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
-    document.getElementById('tab-'+t).style.display='block';
-    if(t==='orders') loadOrders();
-    if(t==='coupons') loadCoupons();
-    if(t==='ads') loadAds();
-    if(window.innerWidth <= 768) document.querySelector('.sidebar').classList.remove('open');
+function toast(msg){
+    const c=document.getElementById('toast-container');
+    const t=document.createElement('div'); t.className='toast';
+    t.innerHTML=`<span>⚡</span><span>${msg}</span>`;
+    c.appendChild(t); setTimeout(()=>t.remove(),3500);
 }
 
-// IMGS
+// LOGIN
+function doLogin(){
+    const u=document.getElementById('login-user').value;
+    const p=document.getElementById('login-pass').value;
+    if(u==='loay' && p==='11211'){ localStorage.setItem('ts_adm','1'); showAdmin(); }
+    else{ toast('خطأ في البيانات'); }
+}
+function showAdmin(){
+    document.getElementById('login-page').style.display='none';
+    document.getElementById('admin-page').style.display='block';
+    loadDashboard(); buildSlots();
+}
+function doLogout(){ localStorage.removeItem('ts_adm'); location.reload(); }
+
+// TABS
+function showTab(name){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.getElementById('tab-'+name).classList.add('active');
+    event.currentTarget?.classList.add('active');
+    if(name==='products') loadProducts();
+    if(name==='ads') loadAds();
+    if(name==='coupons') loadCoupons();
+    if(name==='orders') loadOrders();
+    if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+}
+
+// IMAGE SLOTS (FILE READER)
 function buildSlots(){
-  const g=document.getElementById('slots'); g.innerHTML='';
-  for(let i=0;i<8;i++){
-    const s=document.createElement('div'); s.className='slot';
-    s.innerHTML=imgData[i]?`<img src="${imgData[i]}">`:'+';
-    s.onclick=()=>{
-      const inp=document.createElement('input'); inp.type='file';
-      inp.onchange=e=>{
-        const r=new FileReader();
-        r.onload=ev=>{imgData[i]=ev.target.result; buildSlots();};
-        r.readAsDataURL(e.target.files[0]);
-      }; inp.click();
-    }; g.appendChild(s);
-  }
+    const g=document.getElementById('img-slots'); g.innerHTML='';
+    for(let i=0; i<8; i++){
+        const s=document.createElement('div'); s.className='img-upload-slot';
+        if(imgData[i]){
+            s.innerHTML=`<img src="${imgData[i]}"><div class="remove-img" onclick="imgData[${i}]=null;buildSlots()">✕</div>`;
+        } else {
+            s.innerHTML=`<i class="fas fa-camera"></i><input type="file" onchange="readImg(event,${i})">`;
+        }
+        g.appendChild(s);
+    }
 }
-
-async function saveProd(){
-    const data={ name:document.getElementById('p-name').value, price:document.getElementById('p-price').value, desc:document.getElementById('p-desc').value };
-    for(let i=0;i<8;i++) data[`img${i+1}`] = imgData[i];
-    await fbPush('products', data); alert("تم الحفظ!"); location.reload();
-}
-
-async function loadOrders(){
-    const data = await fbGet('orders');
-    document.getElementById('orders-list').innerHTML = data?Object.entries(data).reverse().map(([id,o])=>`
-        <tr><td>${o.name}</td><td>${o.phone}</td><td>${o.total}ج</td><td><i class="fas fa-trash" onclick="delItem('orders/${id}')"></i></td></tr>
-    `).join(''):'لا يوجد طلبات';
-}
-
-async function saveCoupon(){
-    const code = document.getElementById('cp-code').value.toUpperCase();
-    const perc = document.getElementById('cp-perc').value;
-    await fbSet(`coupons/${code}`, {perc}); alert("تم الإضافة!"); loadCoupons();
-}
-
-async function loadCoupons(){
-    const data = await fbGet('coupons');
-    document.getElementById('coupons-list').innerHTML = data?Object.entries(data).map(([code,c])=>`
-        <div class="card" style="display:flex;justify-content:space-between"><span>${code} (${c.perc}%)</span> <i class="fas fa-trash" onclick="delItem('coupons/${code}')"></i></div>
-    `).join(''):'لا يوجد كوبونات';
-}
-
-async function uploadAd(inp){
+function readImg(e,i){
+    const f=e.target.files[0]; if(!f) return;
     const r=new FileReader();
-    r.onload=async e=>{ await fbPush('ads', {img:e.target.result}); loadAds(); };
-    r.readAsDataURL(inp.files[0]);
+    r.onload=(ev)=>{ imgData[i]=ev.target.result; buildSlots(); };
+    r.readAsDataURL(f);
 }
 
+// PRODUCTS LOGIC
+async function saveProduct(){
+    const name=document.getElementById('p-name').value;
+    const price=document.getElementById('p-price').value;
+    if(!name || !price) return toast('أدخل الاسم والسعر');
+    const data = {
+        name, price, desc:document.getElementById('p-desc').value,
+        img1:imgData[0], img2:imgData[1], img3:imgData[2], img4:imgData[3],
+        img5:imgData[4], img6:imgData[5], img7:imgData[6], img8:imgData[7]
+    };
+    await fbPush('products', data);
+    toast('تم حفظ المنتج! ✅'); location.reload();
+}
+
+async function loadProducts(){
+    const data = await fbGet('products');
+    const tbody = document.getElementById('products-tbody');
+    tbody.innerHTML = data ? Object.entries(data).map(([id,p])=>`
+        <tr><td><img src="${p.img1}" width="40"></td><td>${p.name}</td><td>${p.price}ج</td><td>${p.orders||0}</td><td><button onclick="fbDel('products/${id}');loadProducts()" style="color:red; background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td></tr>
+    `).join('') : '';
+}
+
+// ADS LOGIC
+async function uploadAd(inp){
+    const f=inp.files[0]; if(!f) return;
+    const r=new FileReader();
+    r.onload=async (e)=>{ await fbPush('ads',{img:e.target.result}); toast('تم رفع الإعلان!'); loadAds(); };
+    r.readAsDataURL(f);
+}
 async function loadAds(){
     const data = await fbGet('ads');
-    document.getElementById('ads-list').innerHTML = data?Object.entries(data).map(([id,ad])=>`
-        <div class="slot"><img src="${ad.img}"><i class="fas fa-trash" style="position:absolute;top:5px;right:5px;color:red;z-index:5" onclick="delItem('ads/${id}')"></i></div>
-    `).join(''):'';
+    const grid = document.getElementById('ads-grid');
+    grid.innerHTML = data ? Object.entries(data).map(([id,ad])=>`
+        <div class="img-upload-slot"><img src="${ad.img}"><div class="remove-img" onclick="fbDel('ads/${id}');loadAds()">✕</div></div>
+    `).join('') : '';
 }
 
-async function delItem(path){ if(confirm("حذف؟")){ await fbDel(path); location.reload(); } }
+// COUPONS LOGIC
+async function saveCoupon(){
+    const c=document.getElementById('cp-code').value.toUpperCase();
+    const p=document.getElementById('cp-perc').value;
+    if(!c || !p) return;
+    await fbSet(`coupons/${c}`, {perc:p});
+    toast('تم إضافة الكوبون! 🎫'); loadCoupons();
+}
+async function loadCoupons(){
+    const data = await fbGet('coupons');
+    document.getElementById('coupons-tbody').innerHTML = data ? Object.entries(data).map(([c,v])=>`
+        <tr><td>${c}</td><td>${v.perc}%</td><td><button onclick="fbDel('coupons/${c}');loadCoupons()" style="color:red; background:none; border:none;"><i class="fas fa-trash"></i></button></td></tr>
+    `).join('') : '';
+}
 
-window.onload=buildSlots;
+// ORDERS LOGIC
+async function loadOrders(){
+    const data = await fbGet('orders');
+    document.getElementById('orders-tbody').innerHTML = data ? Object.entries(data).reverse().map(([id,o])=>`
+        <tr><td>${o.name}</td><td>${o.phone}</td><td>${o.total}ج</td><td><button onclick="fbDel('orders/${id}');loadOrders()" style="color:red; background:none; border:none;"><i class="fas fa-trash"></i></button></td></tr>
+    `).join('') : '';
+}
+
+async function loadDashboard(){
+    const [p,o] = await Promise.all([fbGet('products'), fbGet('orders')]);
+    document.getElementById('dashboard-stats').innerHTML = `
+        <div class="card" style="text-align:center"><h3>${p?Object.keys(p).length:0}</h3><p>منتج</p></div>
+        <div class="card" style="text-align:center"><h3>${o?Object.keys(o).length:0}</h3><p>طلب</p></div>
+    `;
+}
+
+if(localStorage.getItem('ts_adm')) showAdmin();
 </script>
 </body>
 </html>
