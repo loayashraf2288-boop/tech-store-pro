@@ -2,66 +2,119 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>TechStore - لوحة التحكم</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | TECHSTORE</title>
     <link rel="stylesheet" href="admin-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-body">
 
     <aside class="sidebar">
-        <div class="admin-profile">
-            <img src="https://via.placeholder.com/50" alt="loay">
-            <div>
-                <h4>Loay</h4>
-                <span>مدير النظام</span>
-            </div>
+        <div class="logo-section">
+            <div class="bolt-icon-small"><i class="fas fa-bolt"></i></div>
+            <h2 class="logo-text">TECH<span>STORE</span></h2>
         </div>
         <nav>
-            <ul>
-                <li class="active"><i class="fas fa-home"></i> الرئيسية</li>
-                <li><i class="fas fa-shopping-bag"></i> الطلبات</li>
-                <li><i class="fas fa-box"></i> المنتجات</li>
-                <li><i class="fas fa-users"></i> العملاء</li>
-                <li><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</li>
-            </ul>
+            <a href="#" class="active"><i class="fas fa-th-large"></i> الرئيسية</a>
+            <a href="#"><i class="fas fa-shopping-cart"></i> الطلبات</a>
+            <a href="#"><i class="fas fa-box"></i> المنتجات</a>
+            <a href="#"><i class="fas fa-users"></i> العملاء</a>
+            <a href="#"><i class="fas fa-cog"></i> الإعدادات</a>
+            <a href="index.html" class="logout-link"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</a>
         </nav>
     </aside>
 
     <main class="main-content">
-        <header class="dash-header">
-            <h2>لوحة التحكم</h2>
-            <p>مرحباً بك من جديد يا Loay 👋</p>
+        <header class="top-bar">
+            <div class="welcome-msg">
+                <h2>أهلاً بك يا <span>Loay</span> 👋</h2>
+                <p>إليك نظرة سريعة على أداء متجرك اليوم.</p>
+            </div>
+            <div class="top-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="ابحث عن طلب أو منتج...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
         </header>
 
         <section class="stats-grid">
             <div class="stat-card">
-                <i class="fas fa-box-open"></i>
-                <h3>126</h3>
-                <p>المنتجات</p>
+                <div class="stat-info">
+                    <p>إجمالي المبيعات</p>
+                    <h3>125,450 ج.م</h3>
+                    <span class="trend up"><i class="fas fa-arrow-up"></i> 15%</span>
+                </div>
+                <div class="stat-icon blue"><i class="fas fa-dollar-sign"></i></div>
             </div>
-            <div class="stat-card blue">
-                <i class="fas fa-users"></i>
-                <h3>1,250</h3>
-                <p>العملاء</p>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <p>طلبات اليوم</p>
+                    <h3>48</h3>
+                    <span class="trend up"><i class="fas fa-arrow-up"></i> 8 طلبات</span>
+                </div>
+                <div class="stat-icon green"><i class="fas fa-shopping-bag"></i></div>
             </div>
-            <div class="stat-card green">
-                <i class="fas fa-shopping-cart"></i>
-                <h3>320</h3>
-                <p>الطلبات</p>
-            </div>
-            <div class="stat-card gold">
-                <i class="fas fa-dollar-sign"></i>
-                <h3>69,998</h3>
-                <p>الأرباح</p>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <p>زوار الموقع</p>
+                    <h3>1,850</h3>
+                    <span class="trend down"><i class="fas fa-arrow-down"></i> 3%</span>
+                </div>
+                <div class="stat-icon purple"><i class="fas fa-eye"></i></div>
             </div>
         </section>
 
-        <div class="chart-container">
-            <h3>توزيع المبيعات</h3>
-            <div class="fake-chart"></div>
+        <div class="dashboard-details">
+            <div class="chart-container">
+                <h3>مؤشر المبيعات الأسبوعي</h3>
+                <canvas id="salesChart"></canvas>
+            </div>
+
+            <div class="recent-orders">
+                <div class="table-header">
+                    <h3>آخر الطلبات</h3>
+                    <button class="view-all">عرض الكل</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>العميل</th>
+                            <th>المنتج</th>
+                            <th>التاريخ</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>أحمد عمر</td>
+                            <td>iPhone 15 Pro</td>
+                            <td>2026/04/20</td>
+                            <td><span class="status new">جديد</span></td>
+                        </tr>
+                        <tr>
+                            <td>سارة علي</td>
+                            <td>AirPods Pro</td>
+                            <td>2026/04/19</td>
+                            <td><span class="status pending">جارِ الشحن</span></td>
+                        </tr>
+                        <tr>
+                            <td>محمود خالد</td>
+                            <td>Apple Watch</td>
+                            <td>2026/04/18</td>
+                            <td><span class="status done">تم التوصيل</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
+        <footer class="admin-footer-bottom">
+            <p>جميع حقوق الملكية محفوظة لـ <span>Loay</span> © 2026</p>
+        </footer>
     </main>
 
+    <script src="admin-script.js"></script>
 </body>
 </html>
