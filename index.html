@@ -7,196 +7,107 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap');
-
-        :root {
-            --bg-color: #030812;
-            --panel-bg: #0a1324;
-            --border-color: #1a2a44;
-            --primary-blue: #0066ff;
-            --hover-blue: #3385ff;
-            --text-light: #ffffff;
-            --text-gray: #8892b0;
-            --neon-glow: 0 0 15px rgba(0, 102, 255, 0.4);
-        }
-
+        :root { --bg-color: #030812; --panel-bg: #0a1324; --border-color: #1a2a44; --primary-blue: #0066ff; --text-light: #ffffff; --neon-glow: 0 0 15px rgba(0, 102, 255, 0.5); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-
-        body { 
-            background-color: var(--bg-color); 
-            color: var(--text-light); 
-            overflow-x: hidden; 
-            position: relative;
-        }
-
-        /* --- تأثير البرق في الخلفية --- */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.15) 0%, transparent 60%);
-            z-index: -1;
-            animation: lightning 7s infinite;
-            pointer-events: none;
-        }
-
-        @keyframes lightning {
-            0%, 95%, 98% { opacity: 0.2; }
-            96%, 99% { opacity: 1; background: radial-gradient(circle at 50% 20%, rgba(0, 102, 255, 0.4) 0%, transparent 80%); }
-            100% { opacity: 0.2; }
-        }
-
-        /* --- شريط تحميل التطبيق (الجديد) --- */
-        .top-app-bar {
-            background: linear-gradient(90deg, #001f4d 0%, #000 100%);
-            padding: 8px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            border-bottom: 1px solid var(--primary-blue);
-        }
-
-        .app-buttons { display: flex; gap: 10px; }
-        .app-btn {
-            padding: 5px 15px; border-radius: 20px; text-decoration: none; font-weight: bold;
-            display: flex; align-items: center; gap: 5px; transition: 0.3s;
-        }
-        .btn-android { background: var(--primary-blue); color: white; box-shadow: var(--neon-glow); }
-        .btn-ios { background: rgba(255,255,255,0.1); color: var(--text-gray); border: 1px solid var(--border-color); pointer-events: none; }
-
-        /* --- Header --- */
-        header {
-            background-color: var(--panel-bg); padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky; top: 0; z-index: 100;
-            flex-wrap: wrap; /* عشان ينزل تحت بعضه في الموبايل */
-            gap: 15px;
-        }
-
-        .logo { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .logo i { color: var(--primary-blue); text-shadow: var(--neon-glow); animation: pulse 2s infinite; }
-
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); text-shadow: 0 0 25px #0066ff; } 100% { transform: scale(1); } }
-
-        .search-bar { flex: 1; min-width: 200px; position: relative; }
-        .search-bar input {
-            width: 100%; padding: 10px 40px 10px 15px; border-radius: 30px;
-            background-color: var(--bg-color); border: 1px solid var(--border-color); color: white;
-        }
-        .search-bar i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray); }
-
-        .nav-icons { display: flex; gap: 20px; align-items: center; }
-        .nav-item { display: flex; align-items: center; gap: 8px; cursor: pointer; position: relative; font-size: 0.9rem; }
-        .badge { background: var(--primary-blue); color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; position: absolute; top: -8px; right: -8px; }
-
-        /* --- Main Content --- */
-        .container { padding: 20px; }
-
-        .hero-banner {
-            background: linear-gradient(135deg, #0a1324 0%, #001f4d 100%);
-            border-radius: 20px; padding: 30px; display: flex; flex-direction: column;
-            border: 1px solid var(--primary-blue); box-shadow: inset 0 0 30px rgba(0, 102, 255, 0.2);
-            margin-bottom: 30px; text-align: center; position: relative; overflow: hidden;
-        }
-        .hero-banner h1 { font-size: 1.8rem; margin-bottom: 10px; z-index: 2; }
-        .hero-banner .discount { font-size: 3.5rem; font-weight: 800; color: var(--primary-blue); text-shadow: var(--neon-glow); z-index: 2; }
-        .btn-shop { background: transparent; border: 2px solid var(--primary-blue); color: white; padding: 8px 25px; border-radius: 30px; margin-top: 15px; font-weight: bold; z-index: 2; }
-
-        /* --- Categories --- */
-        .categories { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .category-card {
-            background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 15px;
-            padding: 15px; min-width: 100px; text-align: center; cursor: pointer; flex-shrink: 0;
-        }
-        .category-card i { font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 10px; }
-
-        /* --- Products Grid --- */
-        .section-title { font-size: 1.2rem; margin-bottom: 15px; display: flex; justify-content: space-between; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-        .product-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 12px; position: relative; }
-        .product-img { width: 100%; height: 120px; background: var(--bg-color); border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--border-color); }
-        .product-title { font-size: 0.9rem; margin-bottom: 5px; height: 40px; overflow: hidden; }
-        .product-price { font-size: 1.1rem; color: var(--primary-blue); font-weight: bold; margin-bottom: 10px; }
-        .btn-add { width: 100%; background: var(--primary-blue); color: white; border: none; padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-        /* --- Sidebar Cart (Responsive) --- */
-        .sidebar-cart {
-            width: 100%; max-width: 350px; background: var(--panel-bg); border-right: 1px solid var(--border-color);
-            padding: 20px; height: 100vh; overflow-y: auto; display: none; position: fixed; right: 0; top: 0; z-index: 1000;
-        }
+        body { background-color: var(--bg-color); color: var(--text-light); overflow-x: hidden; }
         
-        /* --- ظبط الموبايل (Media Queries) --- */
-        @media (max-width: 768px) {
-            .top-app-bar { flex-direction: column; gap: 10px; text-align: center; }
-            .search-bar { order: 3; width: 100%; } /* تنزيل البحث سطر لوحده */
-            .nav-item span:not(.badge) { display: none; } /* إخفاء كلام الزراير في الهيدر عشان الزحمة */
-            header { padding: 10px; }
-        }
+        /* App Bar */
+        .top-app-bar { background: #000; padding: 8px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; border-bottom: 1px solid var(--primary-blue); }
+        .app-btn { padding: 4px 12px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 11px; background: var(--primary-blue); color: #fff; }
+
+        /* Header */
+        header { background: var(--panel-bg); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; gap: 10px; }
+        .logo { font-size: 22px; font-weight: 800; color: #fff; }
+        .logo i { color: var(--primary-blue); text-shadow: var(--neon-glow); }
+        .search-bar { flex: 1; position: relative; }
+        .search-bar input { width: 100%; padding: 8px 35px 8px 15px; border-radius: 20px; background: var(--bg-color); border: 1px solid var(--border-color); color: #fff; outline: none; }
+        .search-bar i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #8892b0; }
+        .nav-icons { display: flex; gap: 15px; }
+        .cart-trigger { position: relative; cursor: pointer; font-size: 1.2rem; }
+        .badge { background: var(--primary-blue); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 50%; position: absolute; top: -10px; right: -10px; }
+
+        /* Banner & Grid */
+        .container { padding: 15px; }
+        .hero { background: linear-gradient(135deg, #0a1324, #001f4d); border-radius: 15px; padding: 25px; text-align: center; border: 1px solid var(--primary-blue); margin-bottom: 20px; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+        .product-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px; position: relative; }
+        .product-img { height: 100px; background: #030812; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px; }
+        .product-price { color: var(--primary-blue); font-weight: bold; margin: 10px 0; }
+        .btn-add { width: 100%; background: var(--primary-blue); color: #fff; border: none; padding: 8px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        /* Sidebar Cart */
+        .sidebar-cart { width: 100%; max-width: 320px; background: var(--panel-bg); position: fixed; right: 0; top: 0; height: 100vh; z-index: 1000; padding: 20px; border-left: 1px solid var(--border-color); display: none; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
+        .modal-content { background: var(--panel-bg); padding: 20px; border-radius: 15px; width: 100%; max-width: 380px; border: 1px solid var(--primary-blue); }
+        .modal-input { width: 100%; padding: 10px; margin-bottom: 12px; border-radius: 8px; background: #030812; border: 1px solid var(--border-color); color: #fff; outline: none; }
+
+        /* AI Chat */
+        #ai-btn { position: fixed; bottom: 20px; right: 20px; width: 55px; height: 55px; background: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff; cursor: pointer; z-index: 999; box-shadow: var(--neon-glow); border: none; }
+        #ai-window { display: none; position: fixed; bottom: 85px; right: 20px; width: 300px; height: 400px; background: var(--panel-bg); border: 1px solid var(--primary-blue); border-radius: 15px; z-index: 999; flex-direction: column; overflow: hidden; box-shadow: var(--neon-glow); }
     </style>
 </head>
 <body>
 
     <div class="top-app-bar">
-        <div>حمل تطبيق TECHSTORE الآن واستمتع بتجربة تسوق أسرع!</div>
+        <div>حمل تطبيق TECHSTORE الآن!</div>
         <div class="app-buttons">
-            <a href="https://github.com/loayashraf2288-boop/tech-store-pro/releases/download/v1.0/_TECH_STORE_19748700.apk" class="app-btn btn-android"><i class="fa-brands fa-android"></i> Android</a>
-            <a href="#" class="app-btn btn-ios"><i class="fa-brands fa-apple"></i> قريباً iOS</a>
+            <a href="https://github.com/loayashraf2288-boop/tech-store-pro/releases/download/v1.0/_TECH_STORE_19748700.apk" class="app-btn">Android <i class="fa-brands fa-android"></i></a>
         </div>
     </div>
 
     <header>
         <div class="logo"><i class="fa-solid fa-bolt"></i> TECHSTORE</div>
-        <div class="search-bar">
-            <i class="fa-solid fa-search"></i>
-            <input type="text" placeholder="ابحث عن منتج...">
-        </div>
+        <div class="search-bar"><i class="fa-solid fa-search"></i><input type="text" placeholder="ابحث هنا..."></div>
         <div class="nav-icons">
-            <div class="nav-item"><i class="fa-regular fa-user"></i><span>حسابي</span></div>
-            <div class="nav-item cart-trigger"><i class="fa-solid fa-cart-shopping"></i><span>السلة</span><span class="badge cart-count">0</span></div>
+            <div class="cart-trigger" id="openCart"><i class="fa-solid fa-cart-shopping"></i><span class="badge cart-count">0</span></div>
         </div>
     </header>
 
     <div class="container">
-        <div class="hero-banner">
+        <div class="hero">
             <h1>عروض الصيف الكبرى</h1>
-            <p>خصومات تصل حتى</p>
-            <div class="discount">50%</div>
-            <button class="btn-shop">تسوق الآن</button>
+            <div style="font-size: 3rem; font-weight: 800; color: var(--primary-blue);">50%</div>
+            <button class="btn-add" style="width: auto; padding: 10px 30px; margin-top: 10px;">تسوق الآن</button>
         </div>
-
-        <div class="section-title"><h3>الأقسام</h3></div>
-        <div class="categories">
-            <div class="category-card"><i class="fa-solid fa-mobile-screen"></i><p>هواتف</p></div>
-            <div class="category-card"><i class="fa-solid fa-laptop"></i><p>لابتوبات</p></div>
-            <div class="category-card"><i class="fa-solid fa-headphones"></i><p>سماعات</p></div>
-            <div class="category-card"><i class="fa-solid fa-tv"></i><p>شاشات</p></div>
-        </div>
-
-        <div class="section-title"><h3>أحدث المنتجات</h3></div>
         <div class="products-grid" id="productsContainer">
-            <div style="text-align: center; width: 100%; grid-column: 1/-1; padding: 50px;">
-                <i class="fa-solid fa-spinner fa-spin" style="font-size: 30px; color: var(--primary-blue);"></i>
-                <p style="margin-top: 10px;">جاري تحميل المنتجات...</p>
             </div>
-        </div>
     </div>
 
     <aside class="sidebar-cart" id="cartSidebar">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-            <h3>سلة التسوق</h3>
-            <i class="fa-solid fa-xmark" id="closeCartBtn" style="cursor: pointer; font-size: 1.2rem;"></i>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            <h3>السلة</h3><i class="fa-solid fa-xmark" id="closeCart" style="cursor: pointer;"></i>
         </div>
-        <div class="cart-items-container" id="cartItems"></div>
-        <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
-            <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; color: var(--primary-blue);">
-                <span>الإجمالي:</span>
-                <span id="cartTotal">0 جنيه</span>
-            </div>
-            <button class="btn-add" id="checkoutBtn" style="margin-top: 15px; padding: 12px; font-size: 1.1rem; box-shadow: var(--neon-glow);">إتمام الطلب <i class="fa-brands fa-whatsapp"></i></button>
+        <div id="cartItems" style="margin-top: 15px; flex: 1; overflow-y: auto;"></div>
+        <div style="padding-top: 15px; border-top: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between;"><span>الإجمالي:</span><span id="cartTotal">0 جنيه</span></div>
+            <button class="btn-add" style="margin-top: 10px;" onclick="openCheckout()">إتمام الطلب</button>
         </div>
     </aside>
 
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content">
+            <h3 style="text-align: center; margin-bottom: 15px;">بيانات التوصيل</h3>
+            <input type="text" id="custName" class="modal-input" placeholder="الاسم بالكامل">
+            <input type="tel" id="custPhone" class="modal-input" placeholder="رقم الموبايل">
+            <textarea id="custAddress" class="modal-input" placeholder="العنوان بالتفصيل" rows="3"></textarea>
+            <button class="btn-add" id="confirmOrderBtn" onclick="confirmCheckout()">تأكيد الطلب <i class="fa-brands fa-whatsapp"></i></button>
+            <button class="btn-add" style="background: none; margin-top: 10px; color: #8892b0;" onclick="closeCheckout()">إلغاء</button>
+        </div>
+    </div>
+
+    <button id="ai-btn"><i class="fa-solid fa-robot"></i></button>
+    <div id="ai-window">
+        <div style="background: var(--primary-blue); padding: 10px; text-align: center; font-size: 14px; font-weight: bold;">خدمة العملاء AI</div>
+        <div id="ai-messages" style="flex: 1; padding: 10px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; gap: 8px;"></div>
+        <div style="padding: 10px; border-top: 1px solid var(--border-color); display: flex; gap: 5px;">
+            <input type="text" id="ai-input" placeholder="اسألني أي حاجة..." style="flex: 1; background: #030812; border: 1px solid var(--border-color); color: #fff; padding: 8px; border-radius: 5px;">
+            <button onclick="askAI()" style="background: var(--primary-blue); border: none; color: #fff; padding: 0 10px; border-radius: 5px;"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
     <script src="store.js"></script>
+    <script src="ai-service.js"></script>
 </body>
 </html>
