@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECHSTORE | تسجيل دخول الإدارة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap');
+
+        :root {
+            --bg-color: #030812;
+            --primary-blue: #0066ff;
+            --hover-blue: #3385ff;
+            --text-light: #ffffff;
+            --text-gray: #8892b0;
+            --neon-glow: 0 0 20px rgba(0, 102, 255, 0.6);
+            --box-bg: rgba(10, 19, 36, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* خلفية إضاءة زرقاء خفيفة ورا البوكس */
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.1) 0%, transparent 50%);
+        }
+
+        /* بوكس تسجيل الدخول */
+        .login-container {
+            background: var(--box-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 102, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 102, 255, 0.15), inset 0 0 20px rgba(0, 102, 255, 0.05);
+            position: relative;
+        }
+
+        /* اللوجو */
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #0033cc 0%, #0088ff 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 35px;
+            color: white;
+            margin: 0 auto 15px auto;
+            box-shadow: var(--neon-glow);
+        }
+
+        .brand-name {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .subtitle {
+            color: var(--text-gray);
+            font-size: 14px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .subtitle::before, .subtitle::after {
+            content: "";
+            height: 1px;
+            width: 40px;
+            background-color: rgba(0, 102, 255, 0.5);
+        }
+
+        /* حقول الإدخال */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 102, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px 45px 15px 15px;
+            color: var(--text-light);
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: inset 0 0 10px rgba(0, 102, 255, 0.2);
+        }
+
+        .input-group i.icon-right {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+            font-size: 18px;
+        }
+
+        .input-group i.icon-left {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .input-group input:focus + i.icon-right {
+            color: var(--primary-blue);
+        }
+
+        /* زر الدخول */
+        .btn-login {
+            width: 100%;
+            background: linear-gradient(90deg, #0044ff 0%, #0088ff 100%);
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-login:hover {
+            box-shadow: var(--neon-glow);
+            transform: translateY(-2px);
+        }
+
+        /* الفوتر الصغير */
+        .secure-footer {
+            margin-top: 25px;
+            color: var(--primary-blue);
+            font-size: 13px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="logo-icon">
+            <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div class="brand-name">TECHSTORE</div>
+        <div class="subtitle">لوحة التحكم - تسجيل الدخول</div>
+
+        <form id="adminLoginForm">
+            <div class="input-group">
+                <input type="text" id="username" placeholder="اسم المستخدم" required autocomplete="off">
+                <i class="fa-regular fa-user icon-right"></i>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="password" placeholder="كلمة المرور" required>
+                <i class="fa-solid fa-lock icon-right"></i>
+                <i class="fa-regular fa-eye icon-left" id="togglePassword"></i>
+            </div>
+
+            <button type="submit" class="btn-login">
+                تسجيل الدخول <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            </button>
+        </form>
+
+        <div class="secure-footer">
+            <i class="fa-solid fa-shield-check"></i> لوحة تحكم آمنة ومشفرة
+        </div>
+    </div>
+
+    <script>
+        // كود بسيط عشان زرار العين يظهر ويخفي الباسورد
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function (e) {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // منع الفورم من التحميل مؤقتاً لحد ما نربط الداتا بيز
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // هنا هنبقى نحط كود التأكد من اليوزر والباسورد من فايربيس
+            // ولما ينجح الدخول هنحوله لصفحة الداشبورد:
+            // window.location.href = "admin-dashboard.html";
+            alert('سيتم ربط تسجيل الدخول بقاعدة البيانات لاحقاً للتحويل للوحة التحكم.');
+        });
+    </script>
+</body>
+</html>
