@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة تحكم TechStore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#04080f;--bg2:#080e1c;--bg3:#0c1528;--blue:#1565ff;--neon:#00b4ff;--text:#e2f0ff;--muted:#5a7a9a;--border:rgba(21,101,255,0.18);--success:#00d68f;--danger:#ff4466;}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);display:flex;}
+        .sidebar{width:260px; height:100vh; background:var(--bg2); border-left:1px solid var(--border); padding:25px; position:fixed;}
+        .main{margin-right:260px; padding:40px; width:100%;}
+        .nav-item{padding:15px; cursor:pointer; border-radius:10px; transition:0.3s; margin-bottom:10px; display:flex; gap:10px;}
+        .nav-item:hover, .nav-item.active{background:rgba(21,101,255,0.1); color:var(--neon);}
+        table{width:100%; border-collapse:collapse; background:var(--bg3); border-radius:15px; overflow:hidden;}
+        th, td{padding:15px; border-bottom:1px solid var(--border); text-align:right;}
+        th{background:rgba(255,255,255,0.03); color:var(--muted); font-size:12px;}
+        .modal{display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;}
+        .modal-content{background:var(--bg2); padding:30px; border-radius:20px; width:500px; border:1px solid var(--border);}
+        input, select{width:100%; padding:12px; margin:10px 0; background:var(--bg4); border:1px solid var(--border); color:white; border-radius:10px; font-family:inherit;}
+        .btn{padding:10px 20px; border:none; border-radius:8px; cursor:pointer; font-weight:700;}
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 style="margin-bottom:40px; color:var(--neon);">⚡ لوحة التحكم</h2>
+        <div class="nav-item active" onclick="showSec('orders')">🛍️ الطلبات</div>
+        <div class="nav-item" onclick="showSec('products')">📦 المنتجات</div>
+        <div class="nav-item" style="color:var(--danger); margin-top:50px;" onclick="location.href='login.html'">🚪 تسجيل الخروج</div>
+    </div>
+
+    <div class="main">
+        <div id="sec-orders">
+            <h3 style="margin-bottom:25px;">قائمة الطلبات الواردة</h3>
+            <table id="orders-tbl">
+                <thead><tr><th>العميل</th><th>العنوان التفصيلي</th><th>الإجمالي</th><th>الحالة</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="sec-products" style="display:none;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:25px;">
+                <h3>إدارة المنتجات</h3>
+                <button class="btn" style="background:var(--success); color:white;" onclick="openAddProd()">+ إضافة منتج جديد</button>
+            </div>
+            <table id="prods-tbl">
+                <thead><tr><th>الصورة</th><th>الاسم</th><th>السعر</th><th>إجراء</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal" id="prod-modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:15px;">إضافة منتج جديد</h3>
+            <input type="text" id="p-name" placeholder="اسم المنتج">
+            <input type="number" id="p-price" placeholder="السعر">
+            <input type="text" id="p-image" placeholder="رابط الصورة (URL)">
+            <button class="btn" style="background:var(--blue); color:white; width:100%;" onclick="saveProduct()">حفظ المنتج</button>
+            <button class="btn" style="background:none; color:var(--muted); width:100%; margin-top:10px;" onclick="document.getElementById('prod-modal').style.display='none'">إلغاء</button>
+        </div>
+    </div>
+
+    <script>
+        const DB = "https://store-33acf-default-rtdb.firebaseio.com";
+        if(!sessionStorage.getItem('ts_admin')) location.href='login.html';
+
+        function showSec(s) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('sec-orders').style.display = s==='orders'?'block':'none';
+            document.getElementById('sec-products').style.display = s==='products'?'block':'none';
+            if(s==='orders') loadOrders(); else loadProducts();
+        }
+
+        async function loadOrders() {
+            const r = await fetch(`${DB}/orders.json`);
+            const data = await r.json();
+            const b = document.querySelector('#orders-tbl tbody');
+            b.innerHTML = data ? Object.entries(data).reverse().map(([id, o]) => `
+                <tr>
+                    <td><b>${o.customer}</b><br><span style="font-size:11px; color:var(--muted)">${o.phone}</span></td>
+                    <td style="font-size:12px; max-width:350px; color:var(--neon)">${o.address}</td>
+                    <td>${o.total.toLocaleString()} ج</td>
+                    <td><span style="background:rgba(0,214,143,0.1); color:var(--success); padding:5px 10px; border-radius:5px; font-size:11px;">${o.status}</span></td>
+                </tr>
+            `).join('') : '<tr><td colspan="4" style="text-align:center;">لا توجد طلبات</td></tr>';
+        }
+
+        async function loadProducts() {
+            const r = await fetch(`${DB}/products.json`);
+            const data = await r.json();
+            const b = document.querySelector('#prods-tbl tbody');
+            b.innerHTML = data ? Object.entries(data).map(([id, p]) => `
+                <tr>
+                    <td><img src="${p.image}" style="width:50px; height:50px; object-fit:cover; border-radius:5px;"></td>
+                    <td>${p.name}</td>
+                    <td>${p.price.toLocaleString()} ج</td>
+                    <td><button onclick="delProd('${id}')" style="color:var(--danger); background:none; border:none; cursor:pointer; font-weight:700;">حذف 🗑️</button></td>
+                </tr>
+            `).join('') : '<tr><td colspan="4" style="text-align:center;">لا توجد منتجات</td></tr>';
+        }
+
+        function openAddProd() { document.getElementById('prod-modal').style.display='flex'; }
+
+        async function saveProduct() {
+            const p = {
+                name: document.getElementById('p-name').value,
+                price: +document.getElementById('p-price').value,
+                image: document.getElementById('p-image').value
+            };
+            if(!p.name || !p.price) return alert('أكمل البيانات');
+            await fetch(`${DB}/products.json`, { method:'POST', body:JSON.stringify(p) });
+            alert('تم الإضافة!');
+            location.reload();
+        }
+
+        async function delProd(id) {
+            if(confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+                await fetch(`${DB}/products/${id}.json`, { method:'DELETE' });
+                loadProducts();
+            }
+        }
+        loadOrders();
+    </script>
+</body>
+</html>
