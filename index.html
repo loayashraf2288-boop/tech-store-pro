@@ -259,7 +259,7 @@
             align-items: center;
             justify-content: center;
             font-size: 3rem;
-            color: var(--border-color);
+            color: var(--primary-blue); /* خليت لون الأيقونة أزرق عشان تنطق */
         }
 
         .product-title {
@@ -322,7 +322,6 @@
         .cart-item-img {
             width: 50px;
             height: 50px;
-            background-color: #fff;
             border-radius: 5px;
         }
 
@@ -337,6 +336,7 @@
             background-color: var(--panel-bg);
             padding: 2px 8px;
             border-radius: 5px;
+            width: fit-content;
         }
 
         .qty-controls button {
@@ -344,6 +344,8 @@
             border: none;
             color: white;
             cursor: pointer;
+            font-size: 1rem;
+            padding: 0 5px;
         }
 
         .cart-summary {
@@ -394,6 +396,7 @@
             padding: 20px 0;
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .feature-item {
@@ -422,16 +425,16 @@
             <div class="nav-item">
                 <i class="fa-regular fa-heart"></i>
                 <span>المفضلة</span>
-                <span class="badge">3</span>
+                <span class="badge">0</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="window.location.href='admin-login.html'">
                 <i class="fa-regular fa-user"></i>
-                <span>حسابي</span>
+                <span>حسابي (الأدمن)</span>
             </div>
             <div class="nav-item">
                 <i class="fa-solid fa-cart-shopping"></i>
                 <span>السلة</span>
-                <span class="badge">2</span>
+                <span class="badge">0</span>
             </div>
         </div>
     </header>
@@ -446,7 +449,7 @@
                     <div class="discount">50%</div>
                     <button class="btn-shop">تسوق الآن</button>
                 </div>
-                <div style="font-size: 100px; color: rgba(255,255,255,0.1);"><i class="fa-solid fa-laptop"></i></div>
+                <div style="font-size: 100px; color: rgba(255,255,255,0.05);"><i class="fa-solid fa-laptop"></i></div>
             </div>
 
             <div class="section-title">
@@ -465,85 +468,24 @@
                 <h3>أحدث المنتجات</h3>
                 <a href="#" style="color: var(--text-gray); text-decoration: none;">عرض المزيد</a>
             </div>
+            
             <div class="products-grid">
-                <div class="product-card">
-                    <span class="product-tag">جديد</span>
-                    <i class="fa-regular fa-heart" style="position: absolute; top: 15px; left: 15px; cursor: pointer;"></i>
-                    <div class="product-img"><i class="fa-solid fa-mobile-screen"></i></div>
-                    <h3 class="product-title">iPhone 15 Pro Max</h3>
-                    <div class="stars">
-                        4.9 <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                    </div>
-                    <div class="product-price">67,999 جنيه</div>
-                    <button class="btn-add"><i class="fa-solid fa-cart-shopping"></i> أضف للسلة</button>
                 </div>
-
-                <div class="product-card">
-                    <span class="product-tag" style="background-color: #ffaa00; color: #000;">خصم 15%</span>
-                    <i class="fa-regular fa-heart" style="position: absolute; top: 15px; left: 15px; cursor: pointer;"></i>
-                    <div class="product-img"><i class="fa-solid fa-headphones"></i></div>
-                    <h3 class="product-title">AirPods Pro 2</h3>
-                    <div class="stars">
-                        4.9 <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                    </div>
-                    <div class="product-price">1,999 جنيه</div>
-                    <button class="btn-add"><i class="fa-solid fa-cart-shopping"></i> أضف للسلة</button>
-                </div>
-
-                <div class="product-card">
-                    <span class="product-tag">جديد</span>
-                    <i class="fa-regular fa-heart" style="position: absolute; top: 15px; left: 15px; cursor: pointer;"></i>
-                    <div class="product-img"><i class="fa-solid fa-stopwatch"></i></div>
-                    <h3 class="product-title">ساعة ذكية Ultra</h3>
-                    <div class="stars">
-                        4.8 <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                    </div>
-                    <div class="product-price">1,299 جنيه</div>
-                    <button class="btn-add"><i class="fa-solid fa-cart-shopping"></i> أضف للسلة</button>
-                </div>
-            </div>
         </div>
 
         <aside class="sidebar-cart">
             <div class="cart-header">
                 <h3>سلة التسوق</h3>
-                <i class="fa-solid fa-xmark" style="cursor: pointer;"></i>
+                <i class="fa-solid fa-xmark" style="cursor: pointer; font-size: 1.2rem;"></i>
             </div>
             
             <div class="cart-items-container">
-                <div class="cart-item">
-                    <div class="cart-item-img"></div>
-                    <div class="cart-item-info" style="flex: 1;">
-                        <h4>iPhone 15 Pro Max</h4>
-                        <p>67,999 جنيه</p>
-                        <div class="qty-controls">
-                            <button>-</button>
-                            <span>1</span>
-                            <button>+</button>
-                        </div>
-                    </div>
-                    <i class="fa-regular fa-trash-can" style="color: #ff4d4d; cursor: pointer;"></i>
                 </div>
-
-                <div class="cart-item">
-                    <div class="cart-item-img"></div>
-                    <div class="cart-item-info" style="flex: 1;">
-                        <h4>AirPods Pro 2</h4>
-                        <p>1,999 جنيه</p>
-                        <div class="qty-controls">
-                            <button>-</button>
-                            <span>1</span>
-                            <button>+</button>
-                        </div>
-                    </div>
-                    <i class="fa-regular fa-trash-can" style="color: #ff4d4d; cursor: pointer;"></i>
-                </div>
-            </div>
 
             <div class="cart-summary">
                 <div class="summary-row">
                     <span>المجموع الفرعي</span>
-                    <span>69,998 جنيه</span>
+                    <span>0 جنيه</span>
                 </div>
                 <div class="summary-row">
                     <span>الخصم</span>
@@ -551,7 +493,7 @@
                 </div>
                 <div class="summary-row total-row">
                     <span>الإجمالي</span>
-                    <span>69,998 جنيه</span>
+                    <span>0 جنيه</span>
                 </div>
                 <button class="btn-checkout">إتمام الطلب</button>
             </div>
@@ -568,5 +510,6 @@
         <div class="copyright">جميع حقوق الملكية لـ Loay &copy; 2026 - TECHSTORE</div>
     </footer>
 
+    <script src="store.js"></script>
 </body>
 </html>
