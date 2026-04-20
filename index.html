@@ -3,81 +3,569 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TECHSTORE | المتجر الرائد للتقنية</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>TECHSTORE | الرئيسية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap');
+
+        :root {
+            --bg-color: #030812;
+            --panel-bg: #0a1324;
+            --border-color: #1a2a44;
+            --primary-blue: #0066ff;
+            --hover-blue: #3385ff;
+            --text-light: #ffffff;
+            --text-gray: #8892b0;
+            --neon-glow: 0 0 15px rgba(0, 102, 255, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--panel-bg);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+        }
+
+        .logo i {
+            color: var(--primary-blue);
+            text-shadow: var(--neon-glow);
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+            margin: 0 30px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 30px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: var(--neon-glow);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-item:hover { color: var(--primary-blue); }
+
+        .badge {
+            background-color: var(--primary-blue);
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 50%;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            box-shadow: var(--neon-glow);
+        }
+
+        /* --- Main Content --- */
+        .container {
+            display: flex;
+            padding: 30px;
+            gap: 30px;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        /* --- Hero Banner --- */
+        .hero-banner {
+            background: linear-gradient(135deg, #0a1324 0%, #001f4d 100%);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--primary-blue);
+            box-shadow: inset 0 0 50px rgba(0, 102, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .hero-text h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .hero-text .discount {
+            font-size: 5rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            text-shadow: var(--neon-glow);
+            line-height: 1;
+        }
+
+        .btn-shop {
+            margin-top: 20px;
+            background: transparent;
+            border: 2px solid var(--primary-blue);
+            color: white;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-shop:hover {
+            background: var(--primary-blue);
+            box-shadow: var(--neon-glow);
+        }
+
+        /* --- Sections --- */
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- Categories --- */
+        .categories {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .category-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 120px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .category-card:hover {
+            border-color: var(--primary-blue);
+            box-shadow: var(--neon-glow);
+            transform: translateY(-5px);
+        }
+
+        .category-card i {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+
+        /* --- Products Grid --- */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 15px;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .product-card:hover {
+            border-color: var(--primary-blue);
+            box-shadow: var(--neon-glow);
+        }
+
+        .product-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary-blue);
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 180px;
+            background-color: var(--bg-color);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--border-color);
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .stars { color: #ffc107; font-size: 0.9rem; margin-bottom: 10px; }
+
+        .product-price {
+            font-size: 1.3rem;
+            color: var(--primary-blue);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .btn-add {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-add:hover { background-color: var(--hover-blue); }
+
+        /* --- Sidebar Cart --- */
+        .sidebar-cart {
+            width: 320px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .cart-item-img {
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+        .cart-item-info h4 { font-size: 0.9rem; }
+        .cart-item-info p { color: var(--primary-blue); font-weight: bold; }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 5px;
+            background-color: var(--panel-bg);
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+
+        .qty-controls button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .cart-summary {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .total-row {
+            font-size: 1.3rem;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            box-shadow: var(--neon-glow);
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--panel-bg);
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+
+        .features-bar {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-gray);
+        }
+        .feature-item i { color: var(--primary-blue); font-size: 1.5rem; }
+
+        .copyright { color: var(--primary-blue); font-weight: bold; letter-spacing: 1px; }
+
+    </style>
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="container">
-            <div class="logo">TECH<span>STORE</span></div>
-            <div class="search-container">
-                <input type="text" placeholder="ابحث عن منتج، علامة تجارية...">
-                <button><i class="fas fa-search"></i></button>
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-bolt"></i> TECHSTORE
+        </div>
+        <div class="search-bar">
+            <i class="fa-solid fa-search"></i>
+            <input type="text" placeholder="ابحث عن منتج...">
+        </div>
+        <div class="nav-icons">
+            <div class="nav-item">
+                <i class="fa-regular fa-heart"></i>
+                <span>المفضلة</span>
+                <span class="badge">3</span>
             </div>
-            <div class="header-icons">
-                <div class="icon-item"><i class="fas fa-shopping-cart"></i><span class="badge">2</span></div>
-                <div class="icon-item"><i class="fas fa-heart"></i><span class="badge">3</span></div>
-                <a href="admin/index.html" class="user-link"><i class="fas fa-user-circle"></i> حسابي</a>
+            <div class="nav-item">
+                <i class="fa-regular fa-user"></i>
+                <span>حسابي</span>
+            </div>
+            <div class="nav-item">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>السلة</span>
+                <span class="badge">2</span>
             </div>
         </div>
     </header>
 
-    <section class="hero-slider">
-        <div class="hero-content">
-            <div class="text-side">
-                <span class="promo-tag">عروض الصيف الكبرى</span>
-                <h1>خصومات تصل إلى <span>50%</span></h1>
-                <p>استمتع بأحدث التقنيات بأفضل الأسعار في مصر.</p>
-                <button class="shop-now">تسوق الآن <i class="fas fa-bolt"></i></button>
+    <div class="container">
+        <div class="main-content">
+            
+            <div class="hero-banner">
+                <div class="hero-text">
+                    <h1>عروض الصيف الكبرى</h1>
+                    <p>خصومات تصل حتى</p>
+                    <div class="discount">50%</div>
+                    <button class="btn-shop">تسوق الآن</button>
+                </div>
+                <div style="font-size: 100px; color: rgba(255,255,255,0.1);"><i class="fa-solid fa-laptop"></i></div>
             </div>
-            <div class="image-side">
-                <img src="https://i.imgur.com/your-image-here.png" alt="Featured Products">
+
+            <div class="section-title">
+                <h3>الأقسام</h3>
+            </div>
+            <div class="categories">
+                <div class="category-card"><i class="fa-solid fa-mobile-screen"></i><p>هواتف</p></div>
+                <div class="category-card"><i class="fa-solid fa-laptop"></i><p>لابتوبات</p></div>
+                <div class="category-card"><i class="fa-solid fa-headphones"></i><p>سماعات</p></div>
+                <div class="category-card"><i class="fa-solid fa-tablet-screen-button"></i><p>أجهزة لوحية</p></div>
+                <div class="category-card"><i class="fa-solid fa-tv"></i><p>شاشات</p></div>
+                <div class="category-card"><i class="fa-solid fa-gamepad"></i><p>إكسسوارات</p></div>
+            </div>
+
+            <div class="section-title">
+                <h3>أحدث المنتجات</h3>
+                <a href="#" style="color: var(--text-gray); text-decoration: none;">عرض المزيد</a>
+            </div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <span class="product-tag">جديد</span>
+                    <i class="fa-regular fa-heart" style="position: absolute; top: 15px; left: 15px; cursor: pointer;"></i>
+                    <div class="product-img"><i class="fa-solid fa-mobile-screen"></i></div>
+                    <h3 class="product-title">iPhone 15 Pro Max</h3>
+                    <div class="stars">
+                        4.9 <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                    </div>
+                    <div class="product-price">67,999 جنيه</div>
+                    <button class="btn-add"><i class="fa-solid fa-cart-shopping"></i> أضف للسلة</button>
+                </div>
+
+                <div class="product-card">
+                    <span class="product-tag" style="background-color: #ffaa00; color: #000;">خصم 15%</span>
+                    <i class="fa-regular fa-heart" style="position: absolute; top: 15px; left: 15px; cursor: pointer;"></i>
+                    <div class="product-img"><i class="fa-solid fa-headphones"></i></div>
+                    <h3 class="product-title">AirPods Pro 2</h3>
+                    <div class="stars">
+                        4.9 <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="product-price">1,999 جنيه</div>
+                    <button class="btn-add"><i class="fa-solid fa-cart-shopping"></i> أضف للسلة</button>
+                </div>
+
+                <div class="product-card">
+                    <span class="product-tag">جديد</span>
+                    <i class="fa-regular fa-heart" style="position: absolute; top: 15px; left: 15px; cursor: pointer;"></i>
+                    <div class="product-img"><i class="fa-solid fa-stopwatch"></i></div>
+                    <h3 class="product-title">ساعة ذكية Ultra</h3>
+                    <div class="stars">
+                        4.8 <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="product-price">1,299 جنيه</div>
+                    <button class="btn-add"><i class="fa-solid fa-cart-shopping"></i> أضف للسلة</button>
+                </div>
             </div>
         </div>
-    </section>
 
-    <section class="categories container">
-        <div class="cat-item"><i class="fas fa-mobile-alt"></i><span>هواتف</span></div>
-        <div class="cat-item"><i class="fas fa-laptop"></i><span>لابتوبات</span></div>
-        <div class="cat-item"><i class="fas fa-headphones"></i><span>سماعات</span></div>
-        <div class="cat-item"><i class="fas fa-clock"></i><span>ساعات</span></div>
-    </section>
+        <aside class="sidebar-cart">
+            <div class="cart-header">
+                <h3>سلة التسوق</h3>
+                <i class="fa-solid fa-xmark" style="cursor: pointer;"></i>
+            </div>
+            
+            <div class="cart-items-container">
+                <div class="cart-item">
+                    <div class="cart-item-img"></div>
+                    <div class="cart-item-info" style="flex: 1;">
+                        <h4>iPhone 15 Pro Max</h4>
+                        <p>67,999 جنيه</p>
+                        <div class="qty-controls">
+                            <button>-</button>
+                            <span>1</span>
+                            <button>+</button>
+                        </div>
+                    </div>
+                    <i class="fa-regular fa-trash-can" style="color: #ff4d4d; cursor: pointer;"></i>
+                </div>
 
-    <main class="container">
-        <h2 class="section-title">أحدث المنتجات</h2>
-        <div class="product-grid">
-            <div class="product-card">
-                <div class="product-badge">جديد</div>
-                <div class="img-box"><img src="https://via.placeholder.com/200" alt="iPhone 15"></div>
-                <h3>iPhone 15 Pro Max</h3>
-                <div class="rating"><i class="fas fa-star"></i> 4.9 (120 تقييم)</div>
-                <div class="price">67,999 ج.م <span>79,999 ج.م</span></div>
-                <button class="add-to-cart">إضافة للسلة <i class="fas fa-cart-plus"></i></button>
+                <div class="cart-item">
+                    <div class="cart-item-img"></div>
+                    <div class="cart-item-info" style="flex: 1;">
+                        <h4>AirPods Pro 2</h4>
+                        <p>1,999 جنيه</p>
+                        <div class="qty-controls">
+                            <button>-</button>
+                            <span>1</span>
+                            <button>+</button>
+                        </div>
+                    </div>
+                    <i class="fa-regular fa-trash-can" style="color: #ff4d4d; cursor: pointer;"></i>
+                </div>
             </div>
 
-            <div class="product-card">
-                <div class="product-badge">خصم 15%</div>
-                <div class="img-box"><img src="https://via.placeholder.com/200" alt="AirPods"></div>
-                <h3>AirPods Pro 2</h3>
-                <div class="rating"><i class="fas fa-star"></i> 4.8 (85 تقييم)</div>
-                <div class="price">1,999 ج.م <span>2,500 ج.م</span></div>
-                <button class="add-to-cart">إضافة للسلة <i class="fas fa-cart-plus"></i></button>
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>المجموع الفرعي</span>
+                    <span>69,998 جنيه</span>
+                </div>
+                <div class="summary-row">
+                    <span>الخصم</span>
+                    <span>0 جنيه</span>
+                </div>
+                <div class="summary-row total-row">
+                    <span>الإجمالي</span>
+                    <span>69,998 جنيه</span>
+                </div>
+                <button class="btn-checkout">إتمام الطلب</button>
             </div>
+        </aside>
+    </div>
+
+    <footer>
+        <div class="features-bar">
+            <div class="feature-item"><i class="fa-solid fa-truck-fast"></i> <span>شحن سريع خلال 24 ساعة</span></div>
+            <div class="feature-item"><i class="fa-solid fa-rotate-left"></i> <span>ضمان استرجاع 14 يوم مجاني</span></div>
+            <div class="feature-item"><i class="fa-solid fa-shield-halved"></i> <span>دفع آمن 100% حماية لبياناتك</span></div>
+            <div class="feature-item"><i class="fa-solid fa-headset"></i> <span>دعم فني 24/7 لجميع استفساراتك</span></div>
         </div>
-    </main>
-
-    <footer class="main-footer">
-        <div class="container">
-            <div class="footer-info">
-                <div class="logo">TECH<span>STORE</span></div>
-                <p>أكبر متجر إلكتروني متخصص في بيع أحدث الأجهزة الذكية.</p>
-            </div>
-            <div class="copyright">
-                <p>جميع حقوق الملكية محفوظة لـ <span>Loay</span> © 2026</p>
-            </div>
-        </div>
+        <div class="copyright">جميع حقوق الملكية لـ Loay &copy; 2026 - TECHSTORE</div>
     </footer>
 
 </body>
