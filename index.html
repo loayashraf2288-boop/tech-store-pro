@@ -1,252 +1,219 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TECHSTORE - Premium Electronics</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TECHSTORE ⚡</title>
+
 <style>
-:root{--primary:#0057FF;--primary-dark:#0040CC;--primary-glow:rgba(0,87,255,0.3);--accent:#00D4FF;--bg-dark:#050A14;--bg-card:#0D1626;--bg-card2:#111D35;--text:#E8F0FF;--text-muted:#7A90B8;--border:rgba(0,87,255,0.2);--success:#00E676;--warning:#FFB300;--danger:#FF3D57;--gold:#FFD700;}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Cairo',sans-serif;background:var(--bg-dark);color:var(--text);overflow-x:hidden;}
-::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg-dark);}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 
-/* TOAST */
-#toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:10px;align-items:center;}
-.toast{background:linear-gradient(135deg,var(--bg-card2),#1a2a4a);border:1px solid var(--primary);border-radius:12px;padding:14px 24px;color:var(--text);font-size:14px;box-shadow:0 8px 32px rgba(0,87,255,0.3);display:flex;align-items:center;gap:10px;min-width:280px;animation:toastIn 0.4s ease;}
-@keyframes toastIn{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+body{
+    background:#0b0b0f;
+    color:#fff;
+}
 
-/* NAV */
-nav{position:fixed;top:0;width:100%;z-index:1000;background:rgba(5,10,20,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;}
-.nav-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:70px;gap:10px;}
-.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
-.logo-icon{width:42px;height:42px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 20px var(--primary-glow);}
-.logo-text{font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:900;color:var(--text);}
-.search-box{flex:1;max-width:400px;position:relative;}
-.search-box input{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:10px 44px 10px 16px;color:var(--text);outline:none;}
-.search-box i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);}
+/* ⚡ خلفية اللوجو */
+.bg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:url("logo.png") center/cover no-repeat;
+    opacity:0.12;
+    z-index:-2;
+}
 
-/* SLIDER */
-.slider-section{margin-top:70px;height:380px;position:relative;overflow:hidden;}
-.slide{position:absolute;inset:0;opacity:0;transition:0.8s;display:flex;align-items:center;justify-content:center;}
-.slide.active{opacity:1;}
-.slide img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+/* ⚡ وميض */
+.flash{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg,#00f0ff,#0044ff);
+    opacity:0;
+    z-index:-1;
+    animation:flash 6s infinite;
+}
 
-/* CATEGORIES */
-.cats-grid{display:flex;gap:10px;flex-wrap:wrap;padding:20px;}
-.cat-btn{padding:10px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;color:var(--text-muted);cursor:pointer;font-weight:700;}
-.cat-btn.active{background:var(--primary);color:#fff;}
+@keyframes flash{
+    0%,90%,100%{opacity:0}
+    92%{opacity:.3}
+    94%{opacity:0}
+    96%{opacity:.4}
+}
 
-/* PRODUCTS */
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px;padding:20px;}
-.product-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:0.3s;}
-.product-card:hover{transform:translateY(-5px);border-color:var(--primary);}
+/* Header */
+header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(10px);
+}
 
-/* CART PANEL */
-.cart-panel{position:fixed;left:0;top:0;height:100%;width:400px;max-width:100%;background:var(--bg-card);border-right:1px solid var(--border);z-index:3001;transform:translateX(-100%);transition:0.4s ease;display:flex;flex-direction:column;}
-.cart-panel.open{transform:translateX(0);}
-.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:3000;display:none;}
-.cart-overlay.open{display:block;}
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
 
-/* MODALS */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--bg-card);border-radius:20px;max-width:800px;width:100%;max-height:90vh;overflow-y:auto;padding:20px;}
-.thumb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px;}
-.thumb{aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;}
-.thumb.active{border-color:var(--primary);}
+.logo img{
+    width:40px;
+    border-radius:50%;
+    box-shadow:0 0 20px #00f0ff;
+    animation:glow 2s infinite alternate;
+}
 
-/* CHAT */
-.chat-fab{position:fixed;bottom:30px;left:30px;z-index:1500;width:56px;height:56px;border-radius:50%;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 5px 20px rgba(0,0,0,0.5);}
+@keyframes glow{
+    from{box-shadow:0 0 10px #00f0ff}
+    to{box-shadow:0 0 25px #00f0ff}
+}
 
-@media(max-width:768px){ .logo-text, .logo-sub{display:none;} .search-box{max-width:160px;} .products-grid{grid-template-columns:repeat(2,1fr);} }
+.btn{
+    background:#00f0ff;
+    border:none;
+    padding:8px 12px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+/* Hero */
+.hero{
+    text-align:center;
+    padding:60px 20px;
+}
+
+/* Products */
+.products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:15px;
+    padding:20px;
+}
+
+.card{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(20px);
+    padding:15px;
+    border-radius:15px;
+    text-align:center;
+    transition:.3s;
+}
+
+.card:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px #00f0ff;
+}
+
+.card img{
+    width:100%;
+    border-radius:10px;
+}
+
+/* Cart */
+.cart{
+    position:fixed;
+    right:-100%;
+    top:0;
+    width:300px;
+    height:100%;
+    background:#111;
+    padding:20px;
+    transition:.3s;
+}
+
+.cart.active{right:0}
+
 </style>
 </head>
+
 <body>
 
-<div id="toast-container"></div>
+<div class="bg"></div>
+<div class="flash"></div>
 
-<nav>
-  <div class="nav-inner">
-    <div class="logo" onclick="filterCat('الكل')">
-      <div class="logo-icon">⚡</div>
-      <div class="logo-text">TECHSTORE</div>
-    </div>
-    <div class="search-box">
-      <i class="fas fa-search"></i>
-      <input type="text" id="search-input" placeholder="ابحث..." oninput="liveSearch(this.value)">
-    </div>
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-primary" onclick="openDownloadModal()"><i class="fas fa-download"></i></button>
-      <button class="btn btn-outline" onclick="openCart()" style="position:relative">
-        <i class="fas fa-shopping-cart"></i><span id="cart-badge" style="position:absolute;top:-5px;right:-5px;background:red;font-size:10px;padding:2px 5px;border-radius:50%;display:none">0</span>
-      </button>
-    </div>
-  </div>
-</nav>
-
-<div class="slider-section" id="main-slider"></div>
-
-<div class="cats-grid">
-  <button class="cat-btn active" onclick="filterCat('الكل')">الكل</button>
-  <button class="cat-btn" onclick="filterCat('موبايلات')">موبايلات</button>
-  <button class="cat-btn" onclick="filterCat('لابتوبات')">لابتوبات</button>
-  <button class="cat-btn" onclick="filterCat('سماعات')">سماعات</button>
-  <button class="cat-btn" onclick="filterCat('إكسسوارات')">إكسسوارات</button>
+<header>
+<div class="logo">
+<img src="logo.png">
+<h3>TECHSTORE ⚡</h3>
 </div>
 
-<div class="products-grid" id="products-grid"></div>
-
-<div class="modal-overlay" id="download-modal" onclick="this.classList.remove('open')">
-    <div class="modal" style="max-width:400px;text-align:center" onclick="event.stopPropagation()">
-        <h3 style="margin-bottom:20px">تحميل التطبيق 📱</h3>
-        <a href="https://github.com/loayashraf2288-boop/tech-store-pro/releases/download/v1.0/_TECH_STORE_19748700.apk" download class="btn btn-primary" style="display:block;padding:15px;margin-bottom:10px;text-decoration:none">
-            <i class="fab fa-android"></i> تحميل للأندرويد (APK مباشر)
-        </a>
-        <div style="background:var(--bg-card2);padding:15px;border-radius:12px;opacity:0.5;position:relative;overflow:hidden">
-            <i class="fab fa-apple"></i> الأيفون (قريباً)
-            <div style="position:absolute;top:5px;right:-15px;background:var(--primary);font-size:9px;padding:2px 15px;transform:rotate(45deg)">COMING</div>
-        </div>
-    </div>
+<div>
+<a href="https://github.com/loayashraf2288-boop/tech-store-pro/releases/download/v1.0/_TECH_STORE_19748700.apk">
+<button class="btn">Android</button>
+</a>
+<button class="btn">iOS قريباً</button>
+<button class="btn" onclick="toggleCart()">🛒</button>
 </div>
+</header>
 
-<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
-<div class="cart-panel" id="cart-panel">
-    <div style="padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
-        <h3>سلة التسوق</h3>
-        <button onclick="closeCart()" style="background:none;border:none;color:#fff;font-size:20px">×</button>
-    </div>
-    <div id="cart-items" style="flex:1;overflow-y:auto;padding:20px"></div>
-    <div style="padding:20px;border-top:1px solid var(--border)">
-        <div style="display:flex;gap:5px;margin-bottom:15px">
-            <input type="text" id="coupon-input" placeholder="كود الخصم" style="flex:1;padding:10px;border-radius:8px;background:var(--bg-dark);border:1px solid var(--border);color:#fff">
-            <button class="btn btn-primary" onclick="applyCoupon()">تطبيق</button>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-weight:900;font-size:1.2rem;margin-bottom:15px">
-            <span>الإجمالي:</span><span id="cart-total">0</span><span>ج</span>
-        </div>
-        <button class="btn btn-primary" style="width:100%;padding:15px" onclick="confirmOrder()">تأكيد عبر واتساب</button>
-    </div>
+<section class="hero">
+<h1>⚡ أقوى متجر إلكترونيات</h1>
+<p>تصميم نيون + سرعة صاروخ</p>
+</section>
+
+<section class="products" id="products"></section>
+
+<div class="cart" id="cart">
+<h3>السلة</h3>
+<div id="items"></div>
+<hr>
+<p>الإجمالي: <span id="total">0</span></p>
+<button class="btn" onclick="order()">اطلب واتساب</button>
 </div>
-
-<div class="modal-overlay" id="product-modal" onclick="closeProduct()">
-    <div class="modal" onclick="event.stopPropagation()">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
-            <div>
-                <img id="m-main-img" style="width:100%;border-radius:15px;aspect-ratio:1;object-fit:cover">
-                <div id="m-thumbs" class="thumb-grid"></div>
-            </div>
-            <div>
-                <h2 id="m-name" style="color:var(--primary)"></h2>
-                <div id="m-price" style="font-size:24px;font-weight:900;margin:15px 0"></div>
-                <p id="m-desc" style="color:var(--text-muted);line-height:1.6;margin-bottom:20px"></p>
-                <button class="btn btn-primary" style="width:100%;padding:15px" onclick="addToCartFromModal()">أضف للسلة</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="chat-fab" onclick="toggleChat()"><i class="fas fa-comments"></i></div>
 
 <script>
-const DB="https://store-c8993-default-rtdb.firebaseio.com";
-let allProducts={}, cart=[], currentPID=null, discount=0;
 
-async function fbGet(p){const r=await fetch(`${DB}/${p}.json`);return await r.json();}
-async function fbPush(p,d){await fetch(`${DB}/${p}.json`,{method:'POST',body:JSON.stringify(d)});}
+let products = JSON.parse(localStorage.getItem("products")) || [
+{name:"موبايل",price:5000,img:"https://via.placeholder.com/150"},
+{name:"لاب توب",price:15000,img:"https://via.placeholder.com/150"}
+];
 
-function toast(m){
-    const c=document.getElementById('toast-container');
-    const t=document.createElement('div');t.className='toast animate__animated animate__fadeInDown';
-    t.innerHTML=`<span>⚡</span> ${m}`;c.appendChild(t);
-    setTimeout(()=>t.remove(),3000);
+let cart=[];
+
+/* عرض */
+function render(){
+let html="";
+products.forEach((p,i)=>{
+html+=`
+<div class="card">
+<img src="${p.img}">
+<h4>${p.name}</h4>
+<p>${p.price} جنيه</p>
+<button class="btn" onclick="add(${i})">أضف</button>
+</div>`;
+});
+products.innerHTML=html;
+}
+render();
+
+/* سلة */
+function add(i){
+cart.push(products[i]);
+update();
 }
 
-async function loadData(){
-    const [p, a] = await Promise.all([fbGet('products'), fbGet('ads')]);
-    allProducts=p||{};
-    renderSlider(a);
-    renderProducts();
+function update(){
+let html="",total=0;
+cart.forEach(p=>{
+html+=`<p>${p.name} - ${p.price}</p>`;
+total+=p.price;
+});
+items.innerHTML=html;
+document.getElementById("total").innerText=total;
 }
 
-function renderSlider(ads){
-    const s=document.getElementById('main-slider');
-    if(!ads) return;
-    const items=Object.values(ads);
-    s.innerHTML=items.map((ad,i)=>`<div class="slide ${i===0?'active':''}"><img src="${ad.img}"></div>`).join('');
-    let cur=0;
-    setInterval(()=>{
-        const slides=document.querySelectorAll('.slide');
-        if(slides.length<2) return;
-        slides[cur].classList.remove('active');
-        cur=(cur+1)%slides.length;
-        slides[cur].classList.add('active');
-    },4000);
+function toggleCart(){
+document.getElementById("cart").classList.toggle("active");
 }
 
-function renderProducts(cat='الكل'){
-    const g=document.getElementById('products-grid');
-    let prods = Object.entries(allProducts);
-    if(cat!=='الكل') prods = prods.filter(([,p])=>p.cat===cat);
-    g.innerHTML=prods.map(([id,p])=>`
-        <div class="product-card" onclick="openProduct('${id}')">
-            <img src="${p.img1}" style="width:100%;aspect-ratio:1;object-fit:cover">
-            <div style="padding:15px">
-                <div style="font-weight:700;font-size:14px">${p.name}</div>
-                <div style="color:var(--primary);font-weight:900;margin-top:5px">${p.price}ج</div>
-            </div>
-        </div>`).join('');
+/* طلب */
+function order(){
+let msg="طلب:%0A";
+cart.forEach(p=>msg+=p.name+"%0A");
+window.open("https://wa.me/201000000000?text="+msg);
 }
 
-function openProduct(id){
-    const p=allProducts[id]; currentPID=id;
-    document.getElementById('m-name').textContent=p.name;
-    document.getElementById('m-price').textContent=p.price+' ج';
-    document.getElementById('m-desc').textContent=p.desc;
-    document.getElementById('m-main-img').src=p.img1;
-    const imgs=[p.img1,p.img2,p.img3,p.img4,p.img5,p.img6,p.img7,p.img8].filter(Boolean);
-    document.getElementById('m-thumbs').innerHTML=imgs.map(img=>`<img src="${img}" class="thumb" onclick="document.getElementById('m-main-img').src='${img}'">`).join('');
-    document.getElementById('product-modal').classList.add('open');
-}
-
-function addToCartFromModal(){
-    cart.push(allProducts[currentPID]);
-    updateCartUI();
-    toast("تمت الإضافة! ✅");
-    closeProduct();
-}
-
-async function applyCoupon(){
-    const code=document.getElementById('coupon-input').value.toUpperCase();
-    const data=await fbGet(`coupons/${code}`);
-    if(data){ discount=parseInt(data.perc); toast(`تم تطبيق خصم ${discount}%`); updateCartUI(); }
-    else{ toast("كود غير صحيح!"); discount=0; updateCartUI(); }
-}
-
-function updateCartUI(){
-    const b=document.getElementById('cart-badge');
-    b.style.display=cart.length?'block':'none'; b.textContent=cart.length;
-    let total=cart.reduce((s,c)=>s+parseInt(c.price),0);
-    if(discount>0) total = total - (total*discount/100);
-    document.getElementById('cart-total').textContent=total.toLocaleString();
-    document.getElementById('cart-items').innerHTML=cart.map(c=>`<div style="margin-bottom:10px">● ${c.name} - ${c.price}ج</div>`).join('');
-}
-
-async function confirmOrder(){
-    // ... كود الواتساب والفايربيس بتاعك ...
-    toast("جاري تحويلك للواتساب...");
-}
-
-function filterCat(c){ renderProducts(c); }
-function openDownloadModal(){ document.getElementById('download-modal').classList.add('open'); }
-function openCart(){ document.getElementById('cart-panel').classList.add('open'); document.getElementById('cart-overlay').classList.add('open'); }
-function closeCart(){ document.getElementById('cart-panel').classList.remove('open'); document.getElementById('cart-overlay').classList.remove('open'); }
-function closeProduct(){ document.getElementById('product-modal').classList.remove('open'); }
-
-window.onload=loadData;
 </script>
+
 </body>
 </html>
