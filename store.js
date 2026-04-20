@@ -1,32 +1,26 @@
 // --- تهيئة البيانات الأساسية ---
-// هنجيب المنتجات من التخزين (لو الأدمن ضاف حاجة)، ولو مفيش هتبقى مصفوفة فاضية
 let products = JSON.parse(localStorage.getItem('techstore_products')) || [];
-// هنجيب السلة من التخزين عشان لو العميل عمل ريفريش الحاجة ماتضيعش
 let cart = JSON.parse(localStorage.getItem('techstore_cart')) || [];
 
 // --- تشغيل السلة الجانبية (فتح وإغلاق) ---
 const cartSidebar = document.querySelector('.sidebar-cart');
-const cartIcons = document.querySelectorAll('.fa-cart-shopping'); // أيقونات السلة في الهيدر والزراير
+const cartIcons = document.querySelectorAll('.fa-cart-shopping');
 const closeCartBtn = document.querySelector('.cart-header .fa-xmark');
 
-// فتح السلة
 cartIcons.forEach(icon => {
     icon.parentElement.addEventListener('click', (e) => {
-        // عشان لو داس على زرار "أضف للسلة" ما يفتحش السلة فوراً، يضيف بس
         if(!e.target.classList.contains('btn-add') && !e.target.parentElement.classList.contains('btn-add')) {
             cartSidebar.style.display = 'block';
         }
     });
 });
 
-// قفل السلة
 if(closeCartBtn) {
     closeCartBtn.addEventListener('click', () => {
         cartSidebar.style.display = 'none';
     });
 }
 
-// السلة مخفية في البداية
 cartSidebar.style.display = 'none';
 cartSidebar.style.position = 'fixed';
 cartSidebar.style.left = '0';
@@ -40,7 +34,7 @@ function renderProducts() {
     const productsGrid = document.querySelector('.products-grid');
     if (!productsGrid) return;
 
-    productsGrid.innerHTML = ''; // تفريغ المنتجات الثابتة
+    productsGrid.innerHTML = ''; 
 
     if (products.length === 0) {
         productsGrid.innerHTML = `
@@ -84,7 +78,6 @@ function addToCart(productId) {
     }
     
     updateCart();
-    // إظهار إشعار بسيط
     alert(`تم إضافة ${product.name} للسلة`);
 }
 
@@ -110,7 +103,7 @@ function updateCart() {
 function renderCart() {
     const cartContainer = document.querySelector('.cart-items-container');
     const totalElement = document.querySelector('.total-row span:last-child');
-    const badgeElements = document.querySelectorAll('.badge'); // تحديث رقم السلة فوق
+    const badgeElements = document.querySelectorAll('.badge');
 
     if (!cartContainer) return;
     cartContainer.innerHTML = '';
@@ -141,15 +134,48 @@ function renderCart() {
 
     if (totalElement) totalElement.innerText = `${total.toLocaleString()} جنيه`;
     
-    // تحديث رقم الأيقونة في الهيدر
     badgeElements.forEach(badge => {
         if(badge.parentElement.innerText.includes('السلة')) {
             badge.innerText = totalItems;
         }
     });
+
+    // ربط زرار إتمام الطلب بالواتساب
+    const checkoutBtn = document.querySelector('.btn-checkout');
+    if (checkoutBtn) {
+        checkoutBtn.onclick = sendOrderToWhatsApp;
+    }
 }
 
-// تشغيل الوظائف أول ما الصفحة تفتح
+// --- إرسال الطلب عبر الواتساب ---
+function sendOrderToWhatsApp() {
+    if (cart.length === 0) {
+        alert('السلة فارغة، أضف منتجات أولاً!');
+        return;
+    }
+
+    let message = "أهلاً، عندي طلب جديد من متجر TECHSTORE ⚡\n\nتفاصيل الطلب:\n------------------------\n";
+    let total = 0;
+
+    cart.forEach(item => {
+        message += `▪️ ${item.name} \nالكمية: ${item.qty} | السعر: ${(item.price * item.qty).toLocaleString()} جنيه\n`;
+        total += item.price * item.qty;
+    });
+
+    message += `------------------------\nالإجمالي: ${total.toLocaleString()} جنيه\n\nبرجاء تأكيد الطلب.`;
+
+    // رقم الواتساب الخاص بك
+    const phoneNumber = "201121189810"; 
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+    // فتح الواتساب في نافذة جديدة
+    window.open(whatsappUrl, '_blank');
+
+    // تصفير السلة بعد إرسال الطلب (اختياري، تقدر تشيل السطرين دول لو مش حابب السلة تفضى)
+    cart = [];
+    updateCart();
+}
+
 window.onload = () => {
     renderProducts();
     renderCart();
