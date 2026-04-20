@@ -1,118 +1,104 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TECHSTORE - لوحة التحكم</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin ⚡</title>
+
 <style>
-:root{--primary:#0057FF;--bg:#050A14;--card:#0D1626;--text:#E8F0FF;--border:rgba(0,87,255,0.2);}
-body{font-family:'Cairo';background:var(--bg);color:var(--text);margin:0;display:flex;overflow-x:hidden;}
-
-/* RESPONSIVE SIDEBAR */
-.sidebar{width:250px;background:var(--card);height:100vh;border-left:1px solid var(--border);position:fixed;right:0;top:0;transition:0.3s;z-index:2000;}
-.main{margin-right:250px;padding:25px;width:100%;transition:0.3s;}
-
-@media(max-width:768px){
-    .sidebar{transform:translateX(100%);}
-    .sidebar.open{transform:translateX(0);}
-    .main{margin-right:0;}
-    .menu-btn{display:flex !important;}
+body{
+    margin:0;
+    background:#0b0b0f;
+    color:#fff;
+    font-family:sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
 
-.menu-btn{display:none;position:fixed;bottom:20px;right:20px;width:50px;height:50px;background:var(--primary);border-radius:50%;color:#fff;align-items:center;justify-content:center;z-index:3000;box-shadow:0 0 15px var(--primary);}
-.nav-item{padding:15px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:0.3s;}
-.nav-item:hover, .nav-item.active{background:var(--primary);color:#fff;}
-.card{background:var(--card);padding:20px;border-radius:15px;border:1px solid var(--border);margin-bottom:20px;}
-.input{width:100%;padding:12px;margin-bottom:10px;background:var(--bg);border:1px solid var(--border);color:#fff;border-radius:10px;}
-.btn{background:var(--primary);color:#fff;border:none;padding:12px 25px;border-radius:10px;cursor:pointer;font-weight:700;}
+/* Background */
+.bg{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:url("logo.png") center/cover no-repeat;
+    opacity:0.1;
+    z-index:-1;
+}
 
-/* IMAGE SLOTS */
-.img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
-.slot{aspect-ratio:1;border:2px dashed #333;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
-.slot img{width:100%;height:100%;object-fit:cover;position:absolute;}
+.box{
+    background:rgba(255,255,255,0.05);
+    padding:25px;
+    border-radius:15px;
+    backdrop-filter:blur(15px);
+    width:300px;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border:none;
+    border-radius:10px;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#00f0ff;
+    border:none;
+    border-radius:10px;
+}
+
+.hidden{display:none}
 </style>
 </head>
+
 <body>
 
-<div class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></div>
+<div class="bg"></div>
 
-<div class="sidebar">
-  <div style="padding:25px;font-weight:900;color:var(--primary);font-size:20px">⚡ TECHSTORE</div>
-  <div class="nav-item active" onclick="showTab('dashboard')"><i class="fas fa-chart-bar"></i> الإحصائيات</div>
-  <div class="nav-item" onclick="showTab('add')"><i class="fas fa-plus"></i> إضافة منتج</div>
-  <div class="nav-item" onclick="showTab('orders')"><i class="fas fa-shopping-bag"></i> الطلبات</div>
-  <div class="nav-item" onclick="showTab('coupons')"><i class="fas fa-tag"></i> الكوبونات</div>
-  <div class="nav-item" onclick="showTab('ads')"><i class="fas fa-ad"></i> الإعلانات</div>
-  <div class="nav-item" onclick="location.reload()" style="margin-top:auto;color:red"><i class="fas fa-sign-out-alt"></i> خروج</div>
+<div class="box" id="login">
+<h3>Admin Login</h3>
+<input id="u" placeholder="User">
+<input id="p" type="password" placeholder="Pass">
+<button onclick="login()">دخول</button>
 </div>
 
-<div class="main">
-    <div id="tab-dashboard" class="tab">
-        <h2>لوحة المعلومات</h2>
-        <div id="stats" style="display:grid;grid-template-columns:1fr 1fr;gap:15px"></div>
-    </div>
-
-    <div id="tab-add" class="tab" style="display:none">
-        <h2>إضافة منتج (8 صور)</h2>
-        <div class="card">
-            <input type="text" id="p-name" class="input" placeholder="اسم المنتج">
-            <input type="number" id="p-price" class="input" placeholder="السعر">
-            <input type="text" id="p-cat" class="input" placeholder="القسم">
-            <textarea id="p-desc" class="input" placeholder="الوصف" rows="3"></textarea>
-            <div class="img-grid" id="slots"></div>
-            <button class="btn" style="width:100%;margin-top:20px" onclick="saveProd()">حفظ ونشر ⚡</button>
-        </div>
-    </div>
-
-    <div id="tab-orders" class="tab" style="display:none">
-        <h2>الطلبات الواردة</h2>
-        <div id="orders-list"></div>
-    </div>
+<div class="box hidden" id="panel">
+<h3>إضافة منتج</h3>
+<input id="name" placeholder="اسم المنتج">
+<input id="price" placeholder="السعر">
+<input id="img" placeholder="رابط الصورة">
+<button onclick="addProduct()">إضافة</button>
 </div>
 
 <script>
-const DB="https://store-c8993-default-rtdb.firebaseio.com";
-let imgData=new Array(8).fill(null);
 
-async function fbGet(p){const r=await fetch(`${DB}/${p}.json`);return await r.json();}
-async function fbSet(p,d){await fetch(`${DB}/${p}.json`,{method:'PUT',body:JSON.stringify(d)});}
-async function fbPush(p,d){await fetch(`${DB}/${p}.json`,{method:'POST',body:JSON.stringify(d)});}
-
-function showTab(t){
-    document.querySelectorAll('.tab').forEach(x=>x.style.display='none');
-    document.getElementById('tab-'+t).style.display='block';
-    if(window.innerWidth<=768) document.querySelector('.sidebar').classList.remove('open');
+function login(){
+if(u.value=="loay" && p.value=="11211"){
+login.style.display="none";
+panel.classList.remove("hidden");
+}else{
+alert("بيانات غلط");
+}
 }
 
-function buildSlots(){
-    const g=document.getElementById('slots'); g.innerHTML='';
-    for(let i=0;i<8;i++){
-        const s=document.createElement('div'); s.className='slot';
-        s.innerHTML=imgData[i]?`<img src="${imgData[i]}">`:'+';
-        s.onclick=()=>{
-            const inp=document.createElement('input'); inp.type='file';
-            inp.onchange=e=>{
-                const r=new FileReader(); r.onload=ev=>{imgData[i]=ev.target.result; buildSlots();}; r.readAsDataURL(e.target.files[0]);
-            }; inp.click();
-        }; g.appendChild(s);
-    }
+function addProduct(){
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+products.push({
+name:name.value,
+price:price.value,
+img:img.value
+});
+
+localStorage.setItem("products",JSON.stringify(products));
+alert("تمت الإضافة ✅");
 }
 
-async function saveProd(){
-    const data={
-        name:document.getElementById('p-name').value,
-        price:document.getElementById('p-price').value,
-        cat:document.getElementById('p-cat').value,
-        desc:document.getElementById('p-desc').value,
-        img1:imgData[0], img2:imgData[1], img3:imgData[2], img4:imgData[3],
-        img5:imgData[4], img6:imgData[5], img7:imgData[6], img8:imgData[7]
-    };
-    await fbPush('products', data); alert("تم الحفظ!"); location.reload();
-}
-
-window.onload=buildSlots;
 </script>
+
 </body>
 </html>
