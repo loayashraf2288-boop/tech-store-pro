@@ -13,7 +13,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap');
-
         :root {
             --bg-dark: #030812;
             --panel-bg: #0a1324;
@@ -21,263 +20,118 @@
             --primary-blue: #0066ff;
             --text-light: #ffffff;
             --text-gray: #8892b0;
-            --success-green: #00cc66;
-            --warning-yellow: #ffcc00;
             --danger-red: #ff4d4d;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-
         body { background-color: var(--bg-dark); color: var(--text-light); display: flex; height: 100vh; overflow: hidden; }
 
-        /* --- القائمة الجانبية (Sidebar) --- */
-        .sidebar { width: 250px; background-color: var(--panel-bg); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 0; }
-        .sidebar-menu { list-style: none; margin-top: 20px; flex: 1; overflow-y: auto; }
+        /* Sidebar */
+        .sidebar { width: 250px; background: var(--panel-bg); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 0; }
         .sidebar-menu li { padding: 12px 20px; cursor: pointer; display: flex; align-items: center; gap: 15px; color: var(--text-gray); transition: 0.3s; }
-        .sidebar-menu li:hover, .sidebar-menu li.active { background: linear-gradient(90deg, rgba(0, 102, 255, 0.1) 0%, transparent 100%); color: var(--text-light); border-right: 3px solid var(--primary-blue); }
-        .sidebar-menu li.active { background-color: rgba(0, 102, 255, 0.15); box-shadow: inset -5px 0 10px rgba(0, 102, 255, 0.1); }
-        .sidebar-menu li i { color: var(--primary-blue); font-size: 1.1rem; }
-        .badge { background: var(--primary-blue); padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-right: auto; }
+        .sidebar-menu li:hover, .sidebar-menu li.active { color: var(--text-light); border-right: 3px solid var(--primary-blue); background: rgba(0, 102, 255, 0.1); }
+        .badge { background: var(--primary-blue); padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-right: auto; }
 
-        .logout-btn { margin: 20px; padding: 10px; border: 1px solid var(--primary-blue); border-radius: 8px; background: transparent; color: var(--text-light); cursor: pointer; text-align: center; transition: 0.3s; }
-        .logout-btn:hover { background: rgba(0, 102, 255, 0.1); color: #ff4d4d; border-color: #ff4d4d; }
+        /* Main Content */
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
+        .section { display: none; }
+        .section.active { display: block; }
 
-        /* --- المحتوى الرئيسي --- */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 20px; }
+        /* Tables & UI */
+        .card { background: var(--panel-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { text-align: right; padding: 12px; border-bottom: 1px solid var(--border-color); }
+        .btn { padding: 8px 15px; border-radius: 8px; cursor: pointer; border: none; font-weight: bold; }
+        .btn-add { background: var(--primary-blue); color: white; }
+        .btn-del { background: var(--danger-red); color: white; }
 
-        /* --- الهيدر العلوى --- */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .header-search { position: relative; width: 300px; }
-        .header-search input { width: 100%; padding: 10px 40px 10px 15px; border-radius: 8px; background: var(--panel-bg); border: 1px solid var(--border-color); color: white; outline: none; }
-        .header-search i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-gray); }
-
-        .user-info { display: flex; align-items: center; gap: 15px; }
-        .user-info .icons { display: flex; gap: 15px; color: var(--text-gray); font-size: 1.2rem; }
-        .user-profile { display: flex; align-items: center; gap: 10px; }
-        .user-profile img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--primary-blue); }
-
-        /* --- كروت الإحصائيات (الشبكة) --- */
-        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--panel-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); position: relative; }
-        .stat-card h4 { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 10px; }
-        .stat-card .value { font-size: 1.8rem; font-weight: bold; }
-        .stat-card .change { font-size: 0.8rem; color: var(--success-green); margin-top: 5px; display: block; }
-        .stat-card i { position: absolute; top: 15px; left: 15px; font-size: 1.5rem; color: var(--primary-blue); opacity: 0.5; }
-
-        /* --- منطقة الرسوم البيانية --- */
-        .charts-row { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-bottom: 20px; height: 300px; }
-        .chart-box { background: var(--panel-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .chart-box h3 { font-size: 1.1rem; margin-bottom: 15px; }
-        .chart-container { flex: 1; position: relative; }
-
-        /* --- الجداول السفلية --- */
-        .tables-row { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .table-box { background: var(--panel-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); overflow-y: auto; max-height: 350px; }
-        .table-box h3 { font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .list-item:last-child { border-bottom: none; }
-        .item-info { display: flex; align-items: center; gap: 10px; }
-        .item-icon { width: 40px; height: 40px; background: var(--bg-dark); border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; }
-        .status-btn { padding: 4px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold; border: none; }
-        .status-new { background: rgba(0, 102, 255, 0.2); color: var(--primary-blue); }
-        .status-processing { background: rgba(255, 204, 0, 0.2); color: var(--warning-yellow); }
-        .status-delivered { background: rgba(0, 204, 102, 0.2); color: var(--success-green); }
-
-        /* --- الفوتر السفلي (حالة النظام) --- */
-        .system-status { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-        .status-card { background: var(--panel-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; }
-        .status-card i { font-size: 1.5rem; color: var(--primary-blue); }
-
+        /* Chat UI */
+        #chat-box { height: 300px; overflow-y: auto; background: var(--bg-dark); padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        .msg { margin-bottom: 10px; padding: 8px; border-radius: 8px; max-width: 80%; }
+        .msg.admin { background: var(--primary-blue); margin-right: auto; }
+        .msg.user { background: var(--border-color); }
     </style>
 </head>
 <body>
 
     <aside class="sidebar">
-        <div style="text-align: center; font-size: 20px; font-weight: bold; padding: 10px;">
-            <i class="fa-solid fa-bolt" style="color: var(--primary-blue);"></i> TECHSTORE
-        </div>
+        <div style="text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 30px;"><i class="fa-solid fa-bolt" style="color:var(--primary-blue)"></i> TECHSTORE</div>
         <ul class="sidebar-menu">
-            <li class="active"><i class="fa-solid fa-house"></i> الرئيسية</li>
-            <li><i class="fa-solid fa-bag-shopping"></i> الطلبات</li>
-            <li><i class="fa-solid fa-box"></i> المنتجات</li>
-            <li><i class="fa-solid fa-layer-group"></i> الأقسام</li>
-            <li><i class="fa-solid fa-users"></i> العملاء</li>
-            <li><i class="fa-solid fa-ticket"></i> كوبونات الخصم</li>
-            <li><i class="fa-solid fa-bullhorn"></i> الإعلانات</li>
-            <li><i class="fa-solid fa-comments"></i> الشات المباشر <span class="badge">5</span></li>
-            <li><i class="fa-solid fa-bell"></i> الإشعارات <span class="badge">8</span></li>
-            <li><i class="fa-solid fa-chart-simple"></i> التقارير</li>
-            <li><i class="fa-solid fa-gear"></i> الإعدادات</li>
+            <li class="active" onclick="showSection('home')"><i class="fa-solid fa-house"></i> الرئيسية</li>
+            <li onclick="showSection('orders')"><i class="fa-solid fa-bag-shopping"></i> الطلبات <span class="badge" id="order-count">0</span></li>
+            <li onclick="showSection('products')"><i class="fa-solid fa-box"></i> المنتجات</li>
+            <li onclick="showSection('chat')"><i class="fa-solid fa-comments"></i> الشات المباشر</li>
+            <li onclick="showSection('settings')"><i class="fa-solid fa-gear"></i> الإعدادات</li>
         </ul>
-        <button class="logout-btn" id="logoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل خروج</button>
+        <button class="btn" style="margin: auto 20px 20px; background:transparent; border:1px solid var(--danger-red); color:var(--danger-red)" onclick="logout()">تسجيل خروج</button>
     </aside>
 
     <main class="main-content">
-        <header class="header">
-            <div class="user-profile">
-                <img src="https://ui-avatars.com/api/?name=Loay&background=0066ff&color=fff" alt="Loay">
-                <div>
-                    <div style="font-weight: bold;">Loay</div>
-                    <div style="font-size: 0.8rem; color: var(--text-gray);">مدير النظام</div>
-                </div>
-            </div>
-            
-            <div style="text-align: center;">
-                <h2>لوحة التحكم</h2>
-                <p style="color: var(--text-gray); font-size: 0.9rem;">مرحباً بك من جديد يا Loay 👋</p>
-            </div>
-
-            <div class="user-info">
-                <div class="icons">
-                    <i class="fa-regular fa-bell"></i>
-                    <i class="fa-regular fa-comment-dots"></i>
-                </div>
-                <div class="header-search">
-                    <i class="fa-solid fa-search"></i>
-                    <input type="text" placeholder="ابحث عن طلب، منتج، عميل...">
-                </div>
-            </div>
-        </header>
-
-        <div id="addProductSection" style="background: var(--panel-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--primary-blue); margin-bottom: 20px; box-shadow: inset 0 0 15px rgba(0, 102, 255, 0.1);">
-            <h3 style="margin-bottom: 15px; color: var(--text-light);"><i class="fa-solid fa-plus-circle" style="color: var(--primary-blue);"></i> إضافة منتج جديد للمتجر</h3>
-            <form id="productForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <input type="text" id="pName" placeholder="اسم المنتج (مثال: iPhone 15)" required style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-dark); color: white; outline: none;">
-                <input type="number" id="pPrice" placeholder="السعر بالجنيه" required style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-dark); color: white; outline: none;">
-                <select id="pIcon" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-dark); color: white; outline: none;">
-                    <option value="fa-solid fa-mobile-screen">هواتف</option>
-                    <option value="fa-solid fa-laptop">لابتوبات</option>
-                    <option value="fa-solid fa-headphones">سماعات</option>
-                    <option value="fa-solid fa-stopwatch">ساعات ذكية</option>
-                    <option value="fa-solid fa-tv">شاشات</option>
-                </select>
-                <input type="text" id="pTag" placeholder="تاج (مثال: جديد أو خصم)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-dark); color: white; outline: none;">
-                <button type="submit" style="background: var(--primary-blue); color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;">
-                    إضافة المنتج الآن
-                </button>
-            </form>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fa-solid fa-box-open"></i>
-                <h4>إجمالي المنتجات</h4>
-                <div class="value" id="totalProductsCount">0</div>
-                <span class="change" style="color: var(--text-gray);">بالمتجر حالياً</span>
-            </div>
-            <div class="stat-card">
-                <i class="fa-solid fa-users"></i>
-                <h4>العملاء</h4>
-                <div class="value">1,250</div>
-                <span class="change">+18 عميل جديد</span>
-            </div>
-            <div class="stat-card">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <h4>الطلبات</h4>
-                <div class="value">320</div>
-                <span class="change">+22 طلب جديد</span>
-            </div>
-            <div class="stat-card">
-                <i class="fa-solid fa-money-bill-trend-up"></i>
-                <h4>الأرباح</h4>
-                <div class="value">69,998</div>
-                <span class="change">+12% عن الشهر الماضي</span>
-            </div>
-            <div class="stat-card">
-                <i class="fa-solid fa-sack-dollar"></i>
-                <h4>المبيعات</h4>
-                <div class="value">69,998 <span style="font-size: 1rem;">$</span></div>
-                <span class="change">+12% عن الشهر الماضي</span>
+        <div id="home" class="section active">
+            <h2>إحصائيات النظام</h2>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+                <div class="card"><h4>المنتجات</h4><h1 id="stat-products">0</h1></div>
+                <div class="card"><h4>الطلبات</h4><h1 id="stat-orders">0</h1></div>
+                <div class="card"><h4>الأرباح</h4><h1 id="stat-revenue">0 ج</h1></div>
             </div>
         </div>
 
-        <div class="charts-row">
-            <div class="chart-box">
-                <h3>توزيع المبيعات</h3>
-                <div class="chart-container">
-                    <canvas id="doughnutChart"></canvas>
+        <div id="products" class="section">
+            <div class="card">
+                <h3>إضافة منتج جديد</h3>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px;">
+                    <input type="text" id="pName" placeholder="الاسم" style="padding:10px; border-radius:8px; background:#000; color:#fff; border:1px solid var(--border-color)">
+                    <input type="number" id="pPrice" placeholder="السعر" style="padding:10px; border-radius:8px; background:#000; color:#fff; border:1px solid var(--border-color)">
+                    <select id="pIcon" style="padding:10px; border-radius:8px; background:#000; color:#fff; border:1px solid var(--border-color)">
+                        <option value="fa-solid fa-mobile-screen">هواتف</option>
+                        <option value="fa-solid fa-laptop">لابتوبات</option>
+                        <option value="fa-solid fa-headphones">سماعات</option>
+                    </select>
+                    <button class="btn btn-add" onclick="addProduct()">حفظ المنتج</button>
                 </div>
             </div>
-            <div class="chart-box">
-                <div style="display: flex; justify-content: space-between;">
-                    <h3>المبيعات خلال آخر 30 يوم</h3>
-                    <select style="background: var(--bg-dark); color: white; border: 1px solid var(--border-color); padding: 5px; border-radius: 5px;"><option>آخر 30 يوم</option></select>
-                </div>
-                <div class="chart-container">
-                    <canvas id="lineChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="tables-row">
-            <div class="table-box">
-                <h3>المنتجات الأكثر مبيعاً</h3>
-                <div class="list-item"><div class="item-info"><div class="item-icon"><i class="fa-solid fa-mobile-screen"></i></div><div><h4>iPhone 15 Pro Max</h4><p style="color:var(--text-gray); font-size:0.8rem;">1,250 قطعة</p></div></div><span style="color:var(--primary-blue);">1</span></div>
-                <div class="list-item"><div class="item-info"><div class="item-icon"><i class="fa-solid fa-headphones"></i></div><div><h4>AirPods Pro 2</h4><p style="color:var(--text-gray); font-size:0.8rem;">980 قطعة</p></div></div><span style="color:var(--primary-blue);">2</span></div>
-                <div class="list-item"><div class="item-info"><div class="item-icon"><i class="fa-solid fa-mobile"></i></div><div><h4>Samsung S24 Ultra</h4><p style="color:var(--text-gray); font-size:0.8rem;">870 قطعة</p></div></div><span style="color:var(--primary-blue);">3</span></div>
-                <div class="list-item"><div class="item-info"><div class="item-icon"><i class="fa-solid fa-stopwatch"></i></div><div><h4>Apple Watch Ultra</h4><p style="color:var(--text-gray); font-size:0.8rem;">670 قطعة</p></div></div><span style="color:var(--primary-blue);">4</span></div>
-            </div>
-
-            <div class="table-box">
-                <h3>آخر الطلبات</h3>
-                <table style="width: 100%; text-align: right; border-collapse: collapse;">
-                    <tr style="color: var(--text-gray); border-bottom: 1px solid var(--border-color);">
-                        <th style="padding-bottom: 10px;">العميل</th>
-                        <th style="padding-bottom: 10px;">الإجمالي</th>
-                        <th style="padding-bottom: 10px;">الحالة</th>
-                    </tr>
-                    <tr><td style="padding: 10px 0;">أحمد محمد</td><td>1,999 جنيه</td><td><button class="status-btn status-new">جديد</button></td></tr>
-                    <tr><td style="padding: 10px 0;">محمد علي</td><td>2,799 جنيه</td><td><button class="status-btn status-processing">جاري التجهيز</button></td></tr>
-                    <tr><td style="padding: 10px 0;">سارة أحمد</td><td>999 جنيه</td><td><button class="status-btn status-delivered">تم التوصيل</button></td></tr>
-                    <tr><td style="padding: 10px 0;">ياسر خالد</td><td>1,299 جنيه</td><td><button class="status-btn status-processing">جاري التجهيز</button></td></tr>
+            <div class="card">
+                <h3>المنتجات الحالية</h3>
+                <table id="products-table">
+                    <thead><tr><th>المنتج</th><th>السعر</th><th>الأيقونة</th><th>إدارة</th></tr></thead>
+                    <tbody></tbody>
                 </table>
             </div>
+        </div>
 
-            <div class="table-box">
-                <h3>تنبيهات المخزون</h3>
-                <div class="list-item"><div class="item-info"><div class="item-icon"><i class="fa-solid fa-headphones"></i></div><div><h4>AirPods Pro 2</h4><p style="color:var(--danger-red); font-size:0.8rem;">المتبقي: 5 قطع</p></div></div><i class="fa-solid fa-circle-exclamation" style="color: var(--danger-red);"></i></div>
-                <div class="list-item"><div class="item-info"><div class="item-icon"><i class="fa-solid fa-headphones-simple"></i></div><div><h4>Sony WH-1000XM5</h4><p style="color:var(--text-gray); font-size:0.8rem;">المتبقي: 8 قطع</p></div></div></div>
-                <div class="list-item"><div class="item-info"><div class="item-icon"><i class="fa-solid fa-mobile-screen"></i></div><div><h4>iPhone 14 Pro</h4><p style="color:var(--danger-red); font-size:0.8rem;">المتبقي: 4 قطع</p></div></div><i class="fa-solid fa-circle-exclamation" style="color: var(--danger-red);"></i></div>
+        <div id="orders" class="section">
+            <div class="card">
+                <h3>الطلبات الواردة</h3>
+                <table id="orders-table">
+                    <thead><tr><th>اسم العميل</th><th>التفاصيل</th><th>الإجمالي</th><th>التاريخ</th></tr></thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
 
-        <div class="system-status">
-            <div class="status-card"><i class="fa-solid fa-code"></i><div><h4>نسخة النظام</h4><p style="color:var(--text-gray); font-size:0.8rem;">v1.0.0</p></div></div>
-            <div class="status-card"><i class="fa-solid fa-shield-halved"></i><div><h4>الحماية</h4><p style="color:var(--success-green); font-size:0.8rem;">100% فعالة</p></div></div>
-            <div class="status-card"><i class="fa-solid fa-headset"></i><div><h4>الدعم الفني</h4><p style="color:var(--text-gray); font-size:0.8rem;">متاح 24/7</p></div></div>
-            <div class="status-card"><i class="fa-solid fa-clock-rotate-left"></i><div><h4>آخر دخول</h4><p style="color:var(--text-gray); font-size:0.8rem;">الآن</p></div></div>
+        <div id="chat" class="section">
+            <div class="card">
+                <h3>دعم العملاء المباشر</h3>
+                <div id="chat-box"></div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="chat-input" placeholder="اكتب ردك هنا..." style="flex:1; padding:10px; border-radius:8px; background:#000; color:#fff; border:1px solid var(--border-color)">
+                    <button class="btn btn-add" onclick="sendChat()">إرسال</button>
+                </div>
+            </div>
         </div>
     </main>
 
-    <script>
-        Chart.defaults.color = '#8892b0';
-        Chart.defaults.font.family = "'Cairo', sans-serif";
-
-        const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
-        new Chart(ctxDoughnut, {
-            type: 'doughnut',
-            data: {
-                labels: ['هواتف', 'لابتوبات', 'سماعات', 'ساعات', 'إكسسوارات'],
-                datasets: [{ data: [40, 25, 15, 10, 10], backgroundColor: ['#0066ff', '#00bfff', '#0044cc', '#3385ff', '#66a3ff'], borderWidth: 0, hoverOffset: 4 }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10 } } }, cutout: '70%' }
-        });
-
-        const ctxLine = document.getElementById('lineChart').getContext('2d');
-        let gradient = ctxLine.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(0, 102, 255, 0.5)');
-        gradient.addColorStop(1, 'rgba(0, 102, 255, 0.0)');
-
-        new Chart(ctxLine, {
-            type: 'line',
-            data: {
-                labels: ['25 مايو', '', '', '', '1 يونيو', '', '', '', '8 يونيو', '', '', '', '15 يونيو', '', '', '', '22 يونيو'],
-                datasets: [{ label: 'المبيعات', data: [20000, 15000, 18000, 25000, 22000, 30000, 28000, 35000, 40000, 38000, 45000, 50000, 48000, 55000, 60000, 65000, 70000], borderColor: '#0066ff', backgroundColor: gradient, borderWidth: 3, fill: true, tension: 0.4, pointBackgroundColor: '#fff', pointBorderColor: '#0066ff', pointBorderWidth: 2, pointRadius: 4 }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { callback: function(value) { return value / 1000 + 'k'; } } }, x: { grid: { display: false } } } }
-        });
-    </script>
-    
     <script src="admin.js"></script>
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+        function logout() {
+            localStorage.removeItem('techstore_admin_logged_in');
+            window.location.href = "admin-login.html";
+        }
+    </script>
 </body>
 </html>
